@@ -18,7 +18,7 @@ const sessionMenu = (() => {
             await api.enterSession(sessionId, nickname);
             stompClient.send("/app/sessions", {}); 
             sessionStorage.setItem('session', sessionId);
-            window.location.href = "../templates/game.html";
+            window.location.href = "game.html";
         } catch (error) {
             console.log(error);
             alert("No se pudo ingresar a la sesión");

@@ -208,7 +208,7 @@ const board = (() => {
             await stompClient.send("/app/sessions", {});
             unsubscribe();
             sessionStorage.removeItem('session');
-            window.location.href = "../templates/sessionMenu.html";
+            window.location.href = "sessionMenu.html";
         } catch (error) {
             console.log("Error al salir de la sesión:", error.status);
         }
