@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Maze</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="/webjars/jquery/3.1.0/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="../js/apiclient.js"></script>
+    <script src="../js/sessionMenu.js" ></script>
+
+</head>
+<body>
+<div class="logo">
+    <img src="../images/logo.png" alt="Cargo Maze">
+</div>
+<div class="sessions">
+    <span>SALAS</span>
+    <div class="session-container">
+        <button class="session" type="submit" id="1" onclick="sessionMenu.enterSession('1')">
+            <div class="part status">
+                <div class="circle-status"></div>
+            </div>
+            <div class="part session-name">Sala MVP</div>
+            <div class="part private">
+                <!--                <img src="../static/images/padlock.png" height="10px" alt="Privada">-->
+            </div>
+            <div class="part capacity" id="capacity-1">0/4</div>
+        </button>
+    </div>
+</div>
+</body>
+</html>

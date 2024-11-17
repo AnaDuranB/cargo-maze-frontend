@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap');
+
+@font-face {
+    font-family: 'Potato';
+    src: url('../fonts/POTATO_SANS-BOLD.woff') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Potato', sans-serif;
+}
+
+body {
+    background-color: #4b88d8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.logo img {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    padding: 20px;
+    width: 200px;
+}
+
+.sessions {
+    text-align: center;
+    justify-items: center;
+}
+
+.sessions span{
+    font-size: 4em;
+    text-align: center;
+    justify-items: center;
+    color: #ffffff;
+    text-shadow: 4px 3px 4px #CF0F0C;
+
+}
+
+.session-container {
+    background-color:#D9D9D9;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    justify-items: center;
+    width: 30vw;
+    height: 60vh;
+    box-shadow: 0 4px 5px #363636;
+    margin-top: 40px;
+}
+
+.session{
+    width: 100%;
+    height: 7vh;
+    background-color:#D9D9D9;
+    border: 1px solid #CF0F0C;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.session:hover {
+    background-color: #B0B0B0;
+    cursor: pointer;
+}
+.part {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.status {
+    flex-basis: 5%;
+}
+.circle-status {
+    width: 15px;
+    height: 15px;
+    background-color: #CF0F0C;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+}
+.session-name {
+    flex-basis: 50%;
+    font-size: 1.2em;
+}
+
+.private {
+    flex-basis: 15%;
+}
+
+.capacity {
+    flex-basis: 10%;
+    font-family: 'Poetsen One', sans-serif;
+    font-size: 1.1em;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%;
+        padding: 20px;
+    }
+}

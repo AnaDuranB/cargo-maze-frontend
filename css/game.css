@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap');
+
+@font-face {
+    font-family: 'Potato';
+    src: url('../fonts/POTATO_SANS-BOLD.woff') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #4b88d8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.logo img {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    padding: 20px;
+    width: 200px;
+}
+.container {
+    display: grid;
+    grid-template-areas:
+        "board player-panel"
+        "controls game-status";
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    width: 80%;
+    max-width: 1000px;
+}
+
+.game-board {
+    grid-area: board;
+    display: grid;
+    grid-template-columns: repeat(15, 50px);
+    grid-template-rows: repeat(10, 50px);
+    background-color: #e9e8e8;
+    border: 2px solid #CF0F0C;
+    border-radius: 8px;
+    padding: 10px;
+}
+.cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+}
+/* .wall {
+    background-color: #666;
+}
+.box {
+    background-color: #ffcc00;
+}
+.goal {
+    background-color: #00cc00;
+}
+.player {
+    background-color: #ff0000;
+} */
+.player-panel {
+    font-family: 'Potato', sans-serif;
+    letter-spacing: 2px;
+    grid-area: player-panel;
+    background-color: #e9e8e8;
+    border: 2px solid #004eb4;
+    border-radius: 8px;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.player-panel h2{
+    margin-top: 15px;
+}
+.player-panel ul li{
+    margin-top: 15px;
+    font-family: Arial, sans-serif;
+    /* font-weight: bold; */
+}
+.controls {
+    grid-area: controls;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.controls button{
+    border-radius: 8px;
+    height: 40px;
+    border: 2px solid #004eb4;
+}
+
+.game-status {
+    font-family: 'Potato', sans-serif;
+    grid-area: game-status;
+    background-color: #e9e8e8;
+    border: 2px solid #004eb4;
+    border-radius: 8px;
+
+    padding: 10px;
+    text-align: center;
+}
+
+.game-status p{
+    font-family: Arial, sans-serif;
+    /* font-weight: bold; */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button.red-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: red;
+    color: white; /* Para que el texto sea visible sobre el fondo rojo */
+    border: none; /* Opcional: para quitar el borde del botón */
+    border-radius: 4px; /* Opcional: para redondear los bordes del botón */
+}
+
+/* Modal base */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal.show {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background: #45a049;
+}
