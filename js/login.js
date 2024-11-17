@@ -12,7 +12,7 @@ const login = (() => {
         try {
             await api.login(nickname);
             sessionStorage.setItem('nickname', nickname);
-            window.location.href = "../templates/sessionMenu.html";
+            window.location.href = "./sessionMenu.html";
         } catch (error) {
             alert("El nickname ya existe, por favor ingrese otro", error);
         }
