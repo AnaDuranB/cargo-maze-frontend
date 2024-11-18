@@ -328,7 +328,7 @@ const board = (() => {
         await api.removePlayerFromSession(session, nickname);
         await stompClient.send("/app/sessions", {});
         sessionStorage.removeItem('session');
-        window.location.href = "../templates/sessionMenu.html";
+        window.location.href = "sessionMenu.html";
     }
 
     return {
