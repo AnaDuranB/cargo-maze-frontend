@@ -225,7 +225,7 @@ const board = (() => {
     const connectAndSubscribe = async function () {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
-            let socket = new SockJS('/stompendpoint');
+            let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
