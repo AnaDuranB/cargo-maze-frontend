@@ -58,7 +58,7 @@ const board = (() => {
                 resetSession();
             }
         } catch (error) {
-            console.log("Error al obtener el estado de la sesión:", error.status);
+            console.log("Error al obtener el estado de la sesión: ",  error.responseJSON.error);
         }
     };
 
@@ -67,7 +67,7 @@ const board = (() => {
             const boardArray = await api.getGameSessionBoard("1"); // Esperar a que la promesa se resuelva
             generateBoard(boardArray);
         } catch (error) {
-            console.log("Error al obtener el tablero de la sesión:", error.status);
+            console.log("Error al obtener el tablero de la sesión: ",  error.responseJSON.error);
         }
     }
 
@@ -160,7 +160,7 @@ const board = (() => {
                 }}));
             getSessionState();
         } catch (error) {
-            console.log("Error al mover el jugador:", error.status);
+            console.log("Error al mover el jugador:",  error.responseJSON.error);
         }
     };
 
@@ -174,7 +174,7 @@ const board = (() => {
             }
             await updatePlayerList(session);
         } catch (error) {
-            console.log("Error initializing game session:", error.status);
+            console.log("Error initializing game session:",  error.responseJSON.error);
         }
     };
 
@@ -197,7 +197,7 @@ const board = (() => {
                 playerList.appendChild(listItem);
             });
         } catch (error) {
-            console.error("Error updating player list:", error.status);
+            console.error("Error updating player list: ",  error.responseJSON.error);
         }
     };
 
@@ -210,7 +210,7 @@ const board = (() => {
             sessionStorage.removeItem('session');
             window.location.href = "sessionMenu.html";
         } catch (error) {
-            console.log("Error al salir de la sesión:", error.status);
+            console.log("Error al salir de la sesión: ",  error.responseJSON.error);
         }
     };
 
@@ -320,7 +320,7 @@ const board = (() => {
         try {
             await api.resetGameSession(session); 
         } catch (error) {
-            console.log("Error al reiniciar la sesión:", error.status);
+            console.log("Error al reiniciar la sesión: ",  error.responseJSON.error);
         }
     }
 
