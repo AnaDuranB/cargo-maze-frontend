@@ -15,7 +15,7 @@ const apiClient = (() => {
         let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
         return await response.json();
     }
-    
+
     const getGameSessionState = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`);
         return await response.json();

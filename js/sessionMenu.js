@@ -21,7 +21,7 @@ const sessionMenu = (() => {
             window.location.href = "game.html";
         } catch (error) {
             console.log(error);
-            alert("No se pudo ingresar a la sesión");
+            alert(error.responseJSON.error);
         }
     };
 
@@ -49,7 +49,7 @@ const sessionMenu = (() => {
                 element.textContent = `${currentUsers}/4`;
             }
         } catch (error) {
-            console.log(error);
+            console.log(error.responseJSON.error);
         }
 
     };
