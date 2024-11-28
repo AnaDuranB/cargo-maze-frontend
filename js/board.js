@@ -11,7 +11,7 @@ const board = (() => {
     const api = apiClient;
     const nickname = sessionStorage.getItem('nickname');
     const session = sessionStorage.getItem('session');
-    let state = null;
+    /*let state = null;
 
     /* Escucha el evento `beforeunload` para detectar cuando el usuario intenta salir de la página.
     window.addEventListener('beforeunload', async (event) => {
@@ -50,24 +50,25 @@ const board = (() => {
     
 
 
-    const getSessionState = async () => {
+    /*const getSessionState = async () => {
         try {
             state = await api.getGameSessionState(session);
+            console.log("Estado de la sesión:", state);
             if(state === "COMPLETED") {
                 stompClient.send("/app/sessions/win." + session, {}, state);
                 resetSession();
             }
         } catch (error) {
-            console.log("Error al obtener el estado de la sesión: ",  error.responseJSON.error);
+            console.log("Error al obtener el estado de la sesión:", error.responseJSON.error);
         }
-    };
+    };*/
 
     const initializeBoard = async () => {
         try {
             const boardArray = await api.getGameSessionBoard("1"); // Esperar a que la promesa se resuelva
             generateBoard(boardArray);
         } catch (error) {
-            console.log("Error al obtener el tablero de la sesión: ",  error.responseJSON.error);
+            console.log("Error al obtener el tablero de la sesión:", error.responseJSON.error);
         }
     }
 
@@ -158,9 +159,9 @@ const board = (() => {
                   x: position.x, 
                   y: position.y 
                 }}));
-            getSessionState();
+            //await getSessionState();
         } catch (error) {
-            console.log("Error al mover el jugador:",  error.responseJSON.error);
+            console.log("Error al mover el jugador:", error.responseJSON.error);
         }
     };
 
@@ -174,7 +175,7 @@ const board = (() => {
             }
             await updatePlayerList(session);
         } catch (error) {
-            console.log("Error initializing game session:",  error.responseJSON.error);
+            console.log(error.responseJSON.error);
         }
     };
 
@@ -197,20 +198,20 @@ const board = (() => {
                 playerList.appendChild(listItem);
             });
         } catch (error) {
-            console.error("Error updating player list: ",  error.responseJSON.error);
+            console.error(error.responseJSON.error);
         }
     };
 
     const exitFromGameSession = async () => {
         try {
-            await stompClient.send("/app/sessions/enterOrExitSession." + session, {});
             await api.removePlayerFromSession(session, nickname);
             await stompClient.send("/app/sessions", {});
+            await stompClient.send("/app/sessions/enterOrExitSession." + session, {});
             unsubscribe();
             sessionStorage.removeItem('session');
-            window.location.href = "sessionMenu.html";
+            window.location.href = "../templates/sessionMenu.html";
         } catch (error) {
-            console.log("Error al salir de la sesión: ",  error.responseJSON.error);
+            console.log(error.responseJSON.error);
         }
     };
 
@@ -268,7 +269,7 @@ const board = (() => {
 
     // GANAR
     const handleGameStatus = (status) => {
-        if (status === 'COMPLETED') {
+        if (status) {
             showWinModal();
             disableMovements();
         }
@@ -316,19 +317,19 @@ const board = (() => {
         document.removeEventListener('keydown', handleKeydown);
     };
 
-    const resetSession = async () => {
+    /*const resetSession = async () => {
         try {
             await api.resetGameSession(session); 
         } catch (error) {
-            console.log("Error al reiniciar la sesión: ",  error.responseJSON.error);
+            console.log("Error al reiniciar la sesión:", error.responseJSON.error);
         }
-    }
+    }*/
 
     const exitAfterWinning = async () => {
         await api.removePlayerFromSession(session, nickname);
         await stompClient.send("/app/sessions", {});
         sessionStorage.removeItem('session');
-        window.location.href = "sessionMenu.html";
+        window.location.href = "../templates/sessionMenu.html";
     }
 
     return {
@@ -340,9 +341,6 @@ const board = (() => {
         initializeBoard,
         exitFromGameSession,
         initializeGameSession,
-        handleGameStatus,
-        showWinModal,
-        disableMovements,
         exitAfterWinning
     };
 

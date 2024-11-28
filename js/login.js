@@ -14,7 +14,7 @@ const login = (() => {
             sessionStorage.setItem('nickname', nickname);
             window.location.href = "./sessionMenu.html";
         } catch (error) {
-            alert("El nickname ya existe, por favor ingrese otro", error);
+            alert(error.responseJSON.error);
         }
     };
 
