@@ -209,7 +209,7 @@ const board = (() => {
             await stompClient.send("/app/sessions/enterOrExitSession." + session, {});
             unsubscribe();
             sessionStorage.removeItem('session');
-            window.location.href = "../templates/sessionMenu.html";
+            window.location.href = "./sessionMenu.html";
         } catch (error) {
             console.log(error.responseJSON.error);
         }
@@ -329,7 +329,7 @@ const board = (() => {
         await api.removePlayerFromSession(session, nickname);
         await stompClient.send("/app/sessions", {});
         sessionStorage.removeItem('session');
-        window.location.href = "../templates/sessionMenu.html";
+        window.location.href = "./sessionMenu.html";
     }
 
     return {
