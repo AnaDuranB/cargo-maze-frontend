@@ -44,12 +44,12 @@ const apiClient = (() => {
         return await response.json();
     };
 
-    const microsoftAuth = async (code) => {
-        let response = await fetch(`${url}auth/callback?code=${encodeURIComponent(code)}`, {
-            method: 'GET'
-        });
-        return await response.json();
-    };
+    // const microsoftAuth = async (code) => {
+    //     let response = await fetch(`${url}auth/callback?code=${encodeURIComponent(code)}`, {
+    //         method: 'GET'
+    //     });
+    //     return await response.json();
+    // };
     // PUT
 
     const enterSession = async (gameSessionId, nickname) => {
@@ -126,8 +126,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname,
-        microsoftAuth
+        verifyNickname
+        // microsoftAuth
     };
 
 })();

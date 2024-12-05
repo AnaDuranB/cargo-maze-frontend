@@ -30,5 +30,21 @@
 </div>
     <script src="js/apiclient.js" defer></script>
     <script src="js/sessionMenu.js" defer></script>
+    <script src="js/login.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const displayName = urlParams.get("displayName");
+            const token = urlParams.get("token");
+        
+            if (displayName && token) {
+                login(displayName, token);
+            } else {
+                console.error("Faltan parámetros de autenticación en la URL");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
 </body>
 </html>

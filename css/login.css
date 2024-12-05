@@ -1,8 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap'); */
 
 @font-face {
     font-family: 'Potato';
     src: url('../fonts/POTATO_SANS-BOLD.woff') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'PoetsenOne';
+    src: url('../fonts/PoetsenOne-Regular.woff') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -73,7 +79,7 @@ body {
 }
 
 .login-form span{
-    font-family: 'Poetsen One', sans-serif;
+    font-family: 'PoetsenOne', sans-serif;
     color: #ffffff;
     margin-bottom: 10px;
     font-size: 0.9em;
