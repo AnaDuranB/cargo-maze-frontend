@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/nickname.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo">
+        <img src="images/logo.png" alt="Cargo Maze">
+    </div>
+    <form class="login-form" method="POST" action="/nickname">
+        <label for="nickname">Elige tu Nickname</label>
+        <input type="text" id="nickname" name="nickname" placeholder="NICKNAME">
+        <button type="button" onclick="login.login(document.getElementById('nickname').value)">CONTINUE</button>
+    </form>
+</div>
+<script src="js/apiclient.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

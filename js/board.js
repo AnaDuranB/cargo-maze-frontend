@@ -155,8 +155,8 @@ const board = (() => {
             await stompClient.send("/app/sessions/move." + session, {}, JSON.stringify({ 
                 nickname: nickname,
                 position: { 
-                  x: position.x, 
-                  y: position.y 
+                    x: position.x, 
+                    y: position.y 
                 }}));
             getSessionState();
         } catch (error) {

@@ -7,8 +7,9 @@ const apiClient = (() => {
 
 
     //const url = "http://localhost:8080/cargoMaze/";
-    const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    
+    // const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
+    const url = "http://localhost:8080/cargoMaze/";
+
     //GET
 
     const getGameSessionBoard = async (gameSessionId) => {
@@ -35,16 +36,21 @@ const apiClient = (() => {
 
     const login = async (nickname) => {
         let json = JSON.stringify({ nickname: nickname });
-        let promise = $.ajax({
-            url: url + "players",
-            type: "POST",
-            data: json,
-            contentType: "application/json"
-        })
-        return promise;
+        let response = await fetch(url + "players", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: json
+        });
+        return await response.json();
     };
 
-    //PUT
+    const microsoftAuth = async (code) => {
+        let response = await fetch(`${url}auth/callback?code=${encodeURIComponent(code)}`, {
+            method: 'GET'
+        });
+        return await response.json();
+    };
+    // PUT
 
     const enterSession = async (gameSessionId, nickname) => {
         let json = JSON.stringify({ nickname: nickname });
@@ -96,6 +102,20 @@ const apiClient = (() => {
         return response; // Return the response to the caller
     }
 
+    // verificar nickname
+    const verifyNickname = async (nickname) => {
+        try {
+            let response = await fetch(`${url}players/${nickname}`);
+            if (!response.ok) {
+                throw new Error('Nickname no disponible');
+            }
+            return await response.json();
+        } catch (error) {
+            return null;
+        }
+    };
+
+
     return {
         login,
         getGameSessionBoard,
@@ -105,7 +125,9 @@ const apiClient = (() => {
         movePlayer,
         removePlayerFromSession,
         getPlayerCountInSession,
-        resetGameSession
+        resetGameSession,
+        verifyNickname,
+        microsoftAuth
     };
 
 })();
