@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap'); */
 
 @font-face {
     font-family: 'Potato';
@@ -6,7 +6,12 @@
     font-weight: normal;
     font-style: normal;
 }
-
+@font-face {
+    font-family: 'PoetsenOne';
+    src: url('../fonts/PoetsenOne-Regular.woff') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 * {
     box-sizing: border-box;
     margin: 0;
