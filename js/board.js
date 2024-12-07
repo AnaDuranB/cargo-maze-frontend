@@ -226,7 +226,7 @@ const board = (() => {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
             // let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
-            let socket = new SockJS('https://localhost:4200/carggoMaze/stompendpoint');
+            let socket = new SockJS('https://localhost:8080/cargoMaze/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);

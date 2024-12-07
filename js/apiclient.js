@@ -50,6 +50,54 @@ const apiClient = (() => {
     //     });
     //     return await response.json();
     // };
+
+    const getCorrectInfo = async () => {
+        try {
+            // Realizar la solicitud al backend
+            let response = await fetch(`${url}correct`);
+            
+            // Verificar si la respuesta fue exitosa
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la información de autenticación');
+            }
+    
+            // Parsear la respuesta como JSON
+            let userInfo = await response.json();
+    
+            // Acceder a los valores del JSON
+            const { displayName, userPrincipalName, token } = userInfo;
+    
+            // Verificar si los datos existen y procesarlos
+            if (displayName && userPrincipalName && token) {
+                console.log("regresamos usuario.");
+                return userInfo;
+            } else {
+                console.warn("Datos de autenticación no encontrados en la respuesta.");
+            }
+        } catch (error) {
+            console.warn("Error al obtener información de autenticación: ", error);
+        }
+    };
+    
+
+    
+    const parseXMLToJSON = (xmlString) => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+    
+        // Asegurémonos de que los elementos existen antes de intentar obtener sus valores
+        const displayNameNode = xmlDoc.getElementsByTagName("displayName")[0];
+        const userPrincipalNameNode = xmlDoc.getElementsByTagName("userPrincipalName")[0];
+        const tokenNode = xmlDoc.getElementsByTagName("token")[0];
+    
+        // Si los nodos no existen, retornamos valores vacíos o null
+        return {
+            displayName: displayNameNode ? displayNameNode.textContent : null,
+            userPrincipalName: userPrincipalNameNode ? userPrincipalNameNode.textContent : null,
+            token: tokenNode ? tokenNode.textContent : null
+        };
+    };
+    
     // PUT
 
     const enterSession = async (gameSessionId, nickname) => {
@@ -126,8 +174,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname
-        // microsoftAuth
+        verifyNickname,
+        getCorrectInfo 
     };
 
 })();
