@@ -1,41 +1,21 @@
 const login = (() => {
     let api = apiClient;
 
-    // document.addEventListener("DOMContentLoaded", async function () {
-    //     const urlParams = new URLSearchParams(window.location.search);
-    //     const displayName = urlParams.get("displayName");
-    //     const userPrincipalName = urlParams.get("userPrincipalName");
-    //     const token = urlParams.get("token");
-
-    //     if (displayName && userPrincipalName && token) {
-    //         initializeUserSession(displayName, userPrincipalName, token);
-    //     } else {
-    //         try {
-    //             const userInfo = await api.getCorrectInfo();
-    //             if (userInfo.displayName && userInfo.userPrincipalName && userInfo.token) {
-    //                 initializeUserSession(userInfo.displayName, userInfo.userPrincipalName, userInfo.token);
-    //             } else {
-    //                 console.warn("Datos de autenticación no encontrados.");
-    //             }
-    //         } catch (error) {
-    //             console.warn("Error al obtener información de autenticación: ", error);
-    //         }
-    //     }
-    // });
-
-
     const loginWithMicrosoft = async () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/aad";
-        let response = await getCorrectInfo();
-        await initializeUserSession(response.displayName, response.userPrincipalName, response.token);
+        try {
+            // Redirect to Azure authentication
+            window.location.href = "http://localhost:8080/oauth2/authorization/aad";
+        } catch (error) {
+            console.error("Error during authentication: ", error);
+        }
     };
 
-    const initializeUserSession = async (displayName, userPrincipalName, token) => {
+    const initializeUserSession = async (displayName, token) => {
         try {
             await handleNickname(displayName);
 
-            sessionStorage.setItem("userPrincipalName", userPrincipalName);
             sessionStorage.setItem("token", token);
+            sessionStorage.setItem("nickname", nickname);
 
             window.location.href = "./sessionMenu.html";
         } catch (error) {
@@ -62,10 +42,29 @@ const login = (() => {
         }
     };
 
-    const getDisplayName = () => sessionStorage.getItem("nickname");
+    const checkAuthentication = async () => {
+        try {
+            const userInfo = await api.getCorrectInfo();
+            if (userInfo && userInfo.displayName && userInfo.userPrincipalName && userInfo.token) {
+                await initializeUserSession(
+                    userInfo.displayName, 
+                    userInfo.userPrincipalName, 
+                    userInfo.token
+                );
+            }
+        } catch (error) {
+            console.warn("Authentication check failed:", error);
+        }
+    };
+    // const getDisplayName = () => sessionStorage.getItem("nickname");
 
     return {
         loginWithMicrosoft,
-        getDisplayName,
+        checkAuthentication,
+        getDisplayName: () => sessionStorage.getItem("nickname")
     };
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+    login.checkAuthentication();
+});

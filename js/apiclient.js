@@ -54,7 +54,7 @@ const apiClient = (() => {
     const getCorrectInfo = async () => {
         try {
             // Realizar la solicitud al backend
-            let response = await fetch(`${url}correct`);
+            let response = await fetch(`${url}correct`, { method: 'GET', mode: 'cors' });
             
             // Verificar si la respuesta fue exitosa
             if (!response.ok) {
@@ -65,10 +65,10 @@ const apiClient = (() => {
             let userInfo = await response.json();
     
             // Acceder a los valores del JSON
-            const { displayName, userPrincipalName, token } = userInfo;
+            const { displayName, token } = userInfo;
     
             // Verificar si los datos existen y procesarlos
-            if (displayName && userPrincipalName && token) {
+            if (displayName && token) {
                 console.log("regresamos usuario.");
                 return userInfo;
             } else {
@@ -77,25 +77,6 @@ const apiClient = (() => {
         } catch (error) {
             console.warn("Error al obtener información de autenticación: ", error);
         }
-    };
-    
-
-    
-    const parseXMLToJSON = (xmlString) => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-    
-        // Asegurémonos de que los elementos existen antes de intentar obtener sus valores
-        const displayNameNode = xmlDoc.getElementsByTagName("displayName")[0];
-        const userPrincipalNameNode = xmlDoc.getElementsByTagName("userPrincipalName")[0];
-        const tokenNode = xmlDoc.getElementsByTagName("token")[0];
-    
-        // Si los nodos no existen, retornamos valores vacíos o null
-        return {
-            displayName: displayNameNode ? displayNameNode.textContent : null,
-            userPrincipalName: userPrincipalNameNode ? userPrincipalNameNode.textContent : null,
-            token: tokenNode ? tokenNode.textContent : null
-        };
     };
     
     // PUT

@@ -29,22 +29,43 @@
     </div>
 </div>
     <script src="js/apiclient.js" defer></script>
+    <!-- <script src="js/login.js" defer></script> -->
     <script src="js/sessionMenu.js" defer></script>
-    <script src="js/login.js" defer></script>
-
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const displayName = urlParams.get("displayName");
             const token = urlParams.get("token");
+            const displayName = urlParams.get('displayName');
+            console.log('Token:', token);
+            console.log('Display Name:', displayName);
+            
+            if (token) {
+                // Almacenar el token en sessionStorage
+                sessionStorage.setItem("token", token);
+
+                // Obtener información del usuario desde el backend
+                try {
+                    const response = await fetch("http://localhost:8080/cargoMaze/correct", {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
         
-            if (displayName && token) {
-                login(displayName, token);
+                    if (response.ok) {
+                        const userInfo = await response.json();
+                        sessionStorage.setItem("nickname", userInfo.displayName);
+                        sessionStorage.setItem("userPrincipalName", userInfo.userPrincipalName);
+                    } else {
+                        console.error("Error al obtener información del usuario");
+                    }
+                } catch (error) {
+                    console.error("Error al conectar con el backend:", error);
+                }
             } else {
-                console.error("Faltan parámetros de autenticación en la URL");
-                window.location.href = "index.html";
+                alert("No se encontró un token de autenticación.");
+                window.location.href = "http://localhost:4200";
             }
         });
+        
     </script>
 </body>
 </html>
