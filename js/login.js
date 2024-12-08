@@ -30,7 +30,7 @@ const login = (() => {
             console.log(sessionStorage.getItem("nickname"));
             console.log(sessionStorage.getItem("token"));
 
-            //window.location.href = "./sessionMenu.html";
+            window.location.href = "./sessionMenu.html";
 
         } catch (error) {
             console.error("Error al inicializar la sesión:", error);

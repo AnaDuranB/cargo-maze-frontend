@@ -36,49 +36,15 @@ const apiClient = (() => {
 
     const login = async (nickname) => {
         let json = JSON.stringify({ nickname: nickname });
-        let response = await fetch(url + "players", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: json
-        });
-        return await response.json();
+        let promise = $.ajax({
+            url: url + "players",
+            type: "POST",
+            data: json,
+            contentType: "application/json"
+        })
+        return promise;
     };
 
-    // const microsoftAuth = async (code) => {
-    //     let response = await fetch(`${url}auth/callback?code=${encodeURIComponent(code)}`, {
-    //         method: 'GET'
-    //     });
-    //     return await response.json();
-    // };
-
-    /*const getCorrectInfo = async () => {
-        try {
-            // Realizar la solicitud al backend
-            let response = await fetch(`${url}correct`);
-            
-            // Verificar si la respuesta fue exitosa
-            if (!response.ok) {
-                throw new Error('No se pudo obtener la información de autenticación');
-            }
-    
-            // Parsear la respuesta como JSON
-            let userInfo = await response.json();
-    
-            // Acceder a los valores del JSON
-            const { displayName, token } = userInfo;
-    
-            // Verificar si los datos existen y procesarlos
-            if (displayName && token) {
-                console.log("regresamos usuario.");
-                return userInfo;
-            } else {
-                console.warn("Datos de autenticación no encontrados en la respuesta.");
-            }
-        } catch (error) {
-            console.warn("Error al obtener información de autenticación: ", error);
-        }
-    };*/
-    
     // PUT
 
     const enterSession = async (gameSessionId, nickname) => {
