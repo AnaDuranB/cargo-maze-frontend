@@ -4,34 +4,45 @@ const login = (() => {
     const loginWithMicrosoft = async () => {
         try {
             // Redirect to Azure authentication
-            window.location.href = "http://135.232.42.21/oauth2/authorization/aad";
+            window.location.href = "http://localhost:8080/oauth2/authorization/aad";
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
     };
 
-    const initializeUserSession = async (displayName, token) => {
+    const initializeUserSession = async () => {
         try {
+            const queryParams = new URLSearchParams(window.location.search);
+
+            const token = queryParams.get("token");
+            const displayName = queryParams.get("displayName");
+
+            console.log("Token:", token);
+            console.log("DisplayName:", displayName);
+
+            if (token == null || displayName == null) {
+                throw new Error("Token o DisplayName no están presentes en la URL.");
+            }
             await handleNickname(displayName);
 
             sessionStorage.setItem("token", token);
-            sessionStorage.setItem("nickname", nickname);
 
-            window.location.href = "./sessionMenu.html";
+            console.log(sessionStorage.getItem("nickname"));
+            console.log(sessionStorage.getItem("token"));
+
+            //window.location.href = "./sessionMenu.html";
+
         } catch (error) {
             console.error("Error al inicializar la sesión:", error);
-            alert("Hubo un error al iniciar sesión.");
         }
     };
 
     const handleNickname = async (newNickname) => {
         sessionStorage.clear();
-
         try {
             const player = await api.verifyNickname(newNickname);
             if (player) {
-                alert("El nickname ya está en uso. Por favor elige otro.");
-                throw new Error("Nickname en uso.");
+                sessionStorage.setItem("nickname", newNickname);
             } else {
                 await api.login(newNickname);
                 sessionStorage.setItem("nickname", newNickname);
@@ -60,10 +71,10 @@ const login = (() => {
     return {
         loginWithMicrosoft,
         checkAuthentication,
-        getDisplayName: () => sessionStorage.getItem("nickname")
+        getDisplayName: () => sessionStorage.getItem("nickname"),
+        init: function () {
+            initializeUserSession();
+        }
     };
 })();
-
-document.addEventListener("DOMContentLoaded", () => {
-    login.checkAuthentication();
-});
+login.init();

@@ -6,9 +6,9 @@ se resuelva, es decir, esperar a que los datos lleguen del servidor.
 const apiClient = (() => {
 
 
-    //const url = "http://localhost:8080/cargoMaze/";
+    const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    const url = "http://135.232.42.21/cargoMaze/";
+    //const url = "http://135.232.42.21/cargoMaze/";
     
     //GET
 
@@ -51,10 +51,10 @@ const apiClient = (() => {
     //     return await response.json();
     // };
 
-    const getCorrectInfo = async () => {
+    /*const getCorrectInfo = async () => {
         try {
             // Realizar la solicitud al backend
-            let response = await fetch(`${url}correct`, { method: 'GET', mode: 'cors' });
+            let response = await fetch(`${url}correct`);
             
             // Verificar si la respuesta fue exitosa
             if (!response.ok) {
@@ -77,7 +77,7 @@ const apiClient = (() => {
         } catch (error) {
             console.warn("Error al obtener información de autenticación: ", error);
         }
-    };
+    };*/
     
     // PUT
 
@@ -155,8 +155,7 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname,
-        getCorrectInfo 
+        verifyNickname
     };
 
 })();
