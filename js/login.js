@@ -4,7 +4,7 @@ const login = (() => {
     const loginWithMicrosoft = async () => {
         try {
             // Redirect to Azure authentication
-            window.location.href = "http://localhost:8080/oauth2/authorization/aad";
+            window.location.href = "http://135.232.42.21/oauth2/authorization/aad";
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
@@ -53,24 +53,8 @@ const login = (() => {
         }
     };
 
-    const checkAuthentication = async () => {
-        try {
-            const userInfo = await api.getCorrectInfo();
-            if (userInfo?.displayName && userInfo?.token) {
-                await initializeUserSession(
-                    userInfo.displayName, 
-                    userInfo.token
-                );
-            }
-        } catch (error) {
-            console.warn("Authentication check failed:", error);
-        }
-    };
-    // const getDisplayName = () => sessionStorage.getItem("nickname");
-
     return {
         loginWithMicrosoft,
-        checkAuthentication,
         getDisplayName: () => sessionStorage.getItem("nickname"),
         init: function () {
             initializeUserSession();
