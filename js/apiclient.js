@@ -8,7 +8,7 @@ const apiClient = (() => {
 
     //const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    const url = "http://135.232.42.21/cargoMaze/";
+    const url = "https://135.232.42.21/cargoMaze/";
     
     //GET
 
