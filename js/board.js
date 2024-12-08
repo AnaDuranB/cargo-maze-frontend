@@ -48,21 +48,6 @@ const board = (() => {
 
     document.addEventListener('keydown', handleKeydown);
     
-
-
-    /*const getSessionState = async () => {
-        try {
-            state = await api.getGameSessionState(session);
-            console.log("Estado de la sesión:", state);
-            if(state === "COMPLETED") {
-                stompClient.send("/app/sessions/win." + session, {}, state);
-                resetSession();
-            }
-        } catch (error) {
-            console.log("Error al obtener el estado de la sesión:", error.responseJSON.error);
-        }
-    };*/
-
     const initializeBoard = async () => {
         try {
             const boardArray = await api.getGameSessionBoard("1"); // Esperar a que la promesa se resuelva
@@ -89,7 +74,6 @@ const board = (() => {
                 switch (cell) {
                     case '.':
                         cellDiv.classList.add('empty');
-                        // cellDiv.innerText = '⬛';
                         break;
                     case '#':
                         cellDiv.classList.add('wall');
@@ -152,14 +136,12 @@ const board = (() => {
 
     const movePlayer = async (position) => {
         try {
-            //await api.movePlayer(session, nickname, position);
             await stompClient.send("/app/sessions/move." + session, {}, JSON.stringify({ 
                 nickname: nickname,
                 position: { 
                     x: position.x, 
                     y: position.y 
                 }}));
-            //await getSessionState();
         } catch (error) {
             console.log("Error al mover el jugador:", error.responseJSON.error);
         }
@@ -227,6 +209,7 @@ const board = (() => {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
             let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
+            //let socket = new SockJS('http://localhost:8080/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
@@ -277,36 +260,8 @@ const board = (() => {
 
     const showWinModal = () => {
         const modal = document.getElementById('winModal');
-        // modal.classList.add('show');
-        // createConfetti();
         modal.style.display = 'flex';
     };
-    
-    /*const createConfetti = () => {
-        const duration = 5 * 1000;
-        const animationEnd = Date.now() + duration;
-    
-        const randomInRange = (min, max) => Math.random() * (max - min) + min;
-    
-        const confettiInterval = setInterval(() => {
-            const timeLeft = animationEnd - Date.now();
-    
-            if (timeLeft <= 0) {
-                clearInterval(confettiInterval);
-                return;
-            }
-    
-            confetti({
-                particleCount: 50,
-                startVelocity: 30,
-                spread: 360,
-                origin: {
-                    x: randomInRange(0.1, 0.9),
-                    y: Math.random() - 0.2
-                }
-            });
-        }, 250);
-    };*/
 
     const disableMovements = () => {
         const controls = document.getElementById('controls');
@@ -316,14 +271,6 @@ const board = (() => {
         }
         document.removeEventListener('keydown', handleKeydown);
     };
-
-    /*const resetSession = async () => {
-        try {
-            await api.resetGameSession(session); 
-        } catch (error) {
-            console.log("Error al reiniciar la sesión:", error.responseJSON.error);
-        }
-    }*/
 
     const exitAfterWinning = async () => {
         await api.removePlayerFromSession(session, nickname);

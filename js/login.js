@@ -10,28 +10,39 @@ const login = (() => {
         }
     };
 
-    const initializeUserSession = async (displayName, token) => {
+    const initializeUserSession = async () => {
         try {
+            const queryParams = new URLSearchParams(window.location.search);
+
+            const token = queryParams.get("token");
+            const displayName = queryParams.get("displayName");
+
+            console.log("Token:", token);
+            console.log("DisplayName:", displayName);
+
+            if (token == null || displayName == null) {
+                throw new Error("Token o DisplayName no están presentes en la URL.");
+            }
             await handleNickname(displayName);
 
             sessionStorage.setItem("token", token);
-            sessionStorage.setItem("nickname", nickname);
+
+            console.log(sessionStorage.getItem("nickname"));
+            console.log(sessionStorage.getItem("token"));
 
             window.location.href = "./sessionMenu.html";
+
         } catch (error) {
             console.error("Error al inicializar la sesión:", error);
-            alert("Hubo un error al iniciar sesión.");
         }
     };
 
     const handleNickname = async (newNickname) => {
         sessionStorage.clear();
-
         try {
             const player = await api.verifyNickname(newNickname);
             if (player) {
-                alert("El nickname ya está en uso. Por favor elige otro.");
-                throw new Error("Nickname en uso.");
+                sessionStorage.setItem("nickname", newNickname);
             } else {
                 await api.login(newNickname);
                 sessionStorage.setItem("nickname", newNickname);
@@ -42,28 +53,12 @@ const login = (() => {
         }
     };
 
-    const checkAuthentication = async () => {
-        try {
-            const userInfo = await api.getCorrectInfo();
-            if (userInfo?.displayName && userInfo?.token) {
-                await initializeUserSession(
-                    userInfo.displayName, 
-                    userInfo.token
-                );
-            }
-        } catch (error) {
-            console.warn("Authentication check failed:", error);
-        }
-    };
-    // const getDisplayName = () => sessionStorage.getItem("nickname");
-
     return {
         loginWithMicrosoft,
-        checkAuthentication,
-        getDisplayName: () => sessionStorage.getItem("nickname")
+        getDisplayName: () => sessionStorage.getItem("nickname"),
+        init: function () {
+            initializeUserSession();
+        }
     };
 })();
-
-document.addEventListener("DOMContentLoaded", () => {
-    login.checkAuthentication();
-});
+login.init();
