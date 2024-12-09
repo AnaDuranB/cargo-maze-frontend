@@ -4,7 +4,7 @@ const login = (() => {
     const loginWithMicrosoft = async () => {
         try {
             // Redirect to Azure authentication
-            window.location.href = "https://135.232.42.21/oauth2/authorization/aad";
+            window.location.href = "https://proyectoarsw.duckdns.org/oauth2/authorization/aad";
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
