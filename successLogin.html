@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Complete</title>
+</head>
+<body>
+    <script>
+        (function () {
+            // Verificar si la ventana principal (opener) existe
+            if (window.opener) {
+                // Enviar un mensaje a la ventana principal indicando éxito
+                window.opener.postMessage({ status: 'success' }, "http://localhost:4200");
+
+                // Esperar un breve instante para garantizar que el mensaje se reciba antes de cerrar
+                setTimeout(() => {
+                    window.close();
+                }, 100); // 100 ms es suficiente para que el mensaje se procese
+            } else {
+                console.error("No opener window found. Unable to notify the parent window.");
+                document.body.innerHTML = `
+                    <p>Authentication complete. Please close this window manually.</p>
+                `;
+            }
+        })();
+    </script>
+    <noscript>
+        <p>Authentication complete. You can close this window manually.</p>
+    </noscript>
+</body>
+</html>
