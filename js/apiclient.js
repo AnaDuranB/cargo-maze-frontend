@@ -13,24 +13,48 @@ const apiClient = (() => {
     //GET
 
     const getGameSessionBoard = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
+        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
+            method: "GET",
+            credentials: "include", // Esto asegura que las cookies se envíen
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
         return await response.json();
-    }
+    };
 
     const getGameSessionState = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/state`);
+        let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
+            method: "GET",
+            credentials: "include", // Esto asegura que las cookies se envíen
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
         return await response.json();
-    }
-
+    };
     const getPlayersInSession = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/players`);
+        let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
+            method: "GET",
+            credentials: "include", // Esto asegura que las cookies se envíen
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
         return await response.json();
     };
 
     const getPlayerCountInSession = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/players/count`);
+        let response = await fetch(`${url}sessions/${gameSessionId}/players/count`, {
+            method: "GET",
+            credentials: "include", // Esto asegura que las cookies se envíen
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
         return await response.json();
     };
+    
 
     //POST
 
@@ -40,7 +64,11 @@ const apiClient = (() => {
             url: url + "players",
             type: "POST",
             data: json,
-            contentType: "application/json"
+            contentType: "application/json",
+            xhrFields: {
+                withCredentials: true // Permite enviar cookies en solicitudes CORS
+            }
+
         })
         return promise;
     };
@@ -53,7 +81,10 @@ const apiClient = (() => {
             url: url + "sessions/" + gameSessionId + "/players",
             type: 'PUT',
             data: json,
-            contentType: "application/json"
+            contentType: "application/json",
+            xhrFields: {
+                withCredentials: true // Permite enviar cookies en solicitudes CORS
+            }
         });
         return response; // Return the response to the caller
     };
@@ -65,7 +96,10 @@ const apiClient = (() => {
             url: url + "sessions/" + gameSessionId + "/players/" + nickname + "/move",
             type: 'PUT',
             data: json,
-            contentType: "application/json"
+            contentType: "application/json",
+            xhrFields: {
+                withCredentials: true // Permite enviar cookies en solicitudes CORS
+            }
         });
         return response; // Return the response to the caller
 
@@ -77,7 +111,10 @@ const apiClient = (() => {
             url: url + "sessions/" + gameSessionId + "/reset",
             type: 'PUT',
             data: json,
-            contentType: "application/json"
+            contentType: "application/json",
+            xhrFields: {
+                withCredentials: true // Permite enviar cookies en solicitudes CORS
+            }
         });
         return response; // Return the response to the caller
     };
@@ -91,7 +128,10 @@ const apiClient = (() => {
             url: url + "sessions/" + gameSessionId + "/players/" + nickname,
             type: 'DELETE',
             data: json,
-            contentType: "application/json"
+            contentType: "application/json",
+            xhrFields: {
+                withCredentials: true // Permite enviar cookies en solicitudes CORS
+            }
         });
         console.log(response); // Log successful response
         return response; // Return the response to the caller
@@ -100,7 +140,10 @@ const apiClient = (() => {
     // verificar nickname
     const verifyNickname = async (nickname) => {
         try {
-            let response = await fetch(`${url}players/${nickname}`);
+            let response = await fetch(`${url}players/${nickname}`, {
+                method: "GET",
+                credentials: "include", // Esto asegura que las cookies se envíen
+            });
             if (!response.ok) {
                 throw new Error('Nickname no disponible');
             }
