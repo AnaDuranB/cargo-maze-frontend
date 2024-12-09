@@ -12,7 +12,7 @@ const login = (() => {
     const loginWithMicrosoftInNewTab = async () => {
         const popup = window.open(
             //"http://localhost:8080/oauth2/authorization/aad",
-            "https://proyectoarsw.duckdns.org/login/oauth2/authorization/aad",
+            "https://proyectoarsw.duckdns.org/oauth2/authorization/aad",
             "_blank",
             "width=600,height=600"
         );
