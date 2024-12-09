@@ -11,13 +11,13 @@ const login = (() => {
 
     const loginWithMicrosoftInNewTab = async () => {
         const popup = window.open(
-            "http://localhost:8080/login/oauth2/authorization/aad",
+            "https://proyectoarsw.duckdns.org/login/oauth2/authorization/aad",
             "_blank",
             "width=600,height=600"
         );
 
         window.addEventListener("message", (event) => {
-            if (event.origin !== "http://localhost:4200") return; // Validar origen del mensaje
+            if (event.origin !== "https://calm-rock-0d4eb650f.5.azurestaticapps.net") return; // Validar origen del mensaje
             if (event.data.status === "success") {
                 console.log("Autenticación completada."); 
                 sessionStorage.setItem("nickname", getCookie('display_name'));
