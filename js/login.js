@@ -52,7 +52,9 @@ const login = (() => {
     const handleNickname = async (newNickname) => {
         try {
             const player = await api.verifyNickname(newNickname);
-            await api.login(newNickname);
+            if(!player){
+                await api.login(newNickname);
+            }
             console.log('player:', player);
         } catch (error) {
             console.error("Error al manejar el nickname:", error);
