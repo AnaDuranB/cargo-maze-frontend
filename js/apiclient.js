@@ -5,11 +5,124 @@ se resuelva, es decir, esperar a que los datos lleguen del servidor.
 
 const apiClient = (() => {
 
-
     //const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
+    const url = "http://localhost:8080/cargoMaze/";
+     //encryption
+    const SECRET_KEY = "clave-super-secreta";
+    const IV = "1234567890123456";
+
+    function generateKey(key) {
+        const hashedKey = CryptoJS.SHA256(key);
+        return CryptoJS.enc.Utf8.parse(hashedKey.toString(CryptoJS.enc.Base64).substring(0, 16));
+    }
+
+    // FUNCIONES DE CIFRADO
+
+    function encrypt(data) {
+        const key = CryptoJS.enc.Utf8.parse(SECRET_KEY);
+        const iv = CryptoJS.enc.Utf8.parse(IV);
+        return CryptoJS.AES.encrypt(data, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString();
+    }
     
+    function decrypt(encryptedData) {
+        try {
+            const SECRET_KEY = "clave-super-secreta";
+            const IV = "1234567890123456";
+    
+            // Hash the key using SHA-256 and take the first 16 bytes
+            const hashedKey = CryptoJS.SHA256(SECRET_KEY);
+            const key = CryptoJS.enc.Hex.parse(hashedKey.toString().substr(0, 32));
+            const iv = CryptoJS.enc.Utf8.parse(IV);
+    
+            // Directly use AES decrypt method
+            const decrypted = CryptoJS.AES.decrypt(
+                encryptedData, 
+                key, 
+                { 
+                    iv: iv, 
+                    mode: CryptoJS.mode.CBC, 
+                    padding: CryptoJS.pad.Pkcs7 
+                }
+            );
+    
+            // Convert to UTF-8 string
+            const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
+    
+            console.log("Decryption Details:");
+            console.log("Encrypted Data:", encryptedData);
+            console.log("Key:", key);
+            console.log("IV:", iv);
+            console.log("Decrypted Text:", decryptedText);
+    
+            if (!decryptedText) {
+                throw new Error("Decryption resulted in empty string");
+            }
+    
+            return decryptedText;
+        } catch (error) {
+            console.error("Detailed Decryption Error:", error);
+            console.error("Error Name:", error.name);
+            console.error("Error Message:", error.message);
+            return null;
+        }
+    }
+    
+    
+
+    // FUNCIONES HTTP
+
+    // POST: Enviar datos cifrados
+    async function sendEncryptedData(data) {
+        try {
+            const encryptedData = encrypt(data);
+            const response = await fetch(`${url}test-encryption`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ payload: encryptedData }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const result = await response.json();
+    
+            // Acceder al valor cifrado desde la propiedad "payload"
+            if (result.payload) {
+                console.log("Encrypted response from server:", result.payload);
+    
+                // Si el servidor responde con el campo 'payload', puedes proceder con el descifrado
+                const decryptedResponse = decrypt(result.payload);
+                console.log("Decrypted response:", decryptedResponse);
+                return decryptedResponse;
+            } else {
+                console.error("No se recibió el campo 'payload' en la respuesta.");
+            }
+    
+        } catch (error) {
+            console.error("Error sending encrypted data:", error.message);
+            throw error;
+        }
+    }
+    
+    async function sendDecryptedData(encryptedData) {
+        await fetch(`${url}test-decryption`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ payload: encryptedData })
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            console.log("Datos descifrados desde el servidor:", responseData.decryptedData);
+        })
+        .catch(error => {
+            console.error("Error al descifrar los datos:", error);
+        });
+}
     //GET
 
     const getGameSessionBoard = async (gameSessionId) => {
@@ -164,7 +277,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname
+        verifyNickname,
+        sendEncryptedData
     };
 
 })();

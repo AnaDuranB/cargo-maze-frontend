@@ -11,19 +11,19 @@ const login = (() => {
 
     const loginWithMicrosoftInNewTab = async () => {
         const popup = window.open(
-            "cargo-maze-backend2-gbaadrdgb9eqf9e6.eastus2-01.azurewebsites.net/login/oauth2/authorization/aad",
+            "localhost:8080/login/oauth2/authorization/aad",
             "_blank",
             "width=600,height=600"
         );
 
         window.addEventListener("message", (event) => {
-            if (event.origin !== "https://calm-rock-0d4eb650f.5.azurestaticapps.net") return; // Validar origen del mensaje
+            if (event.origin !== "http://localhost:4200.net") return; // Validar origen del mensaje
             if (event.data.status === "success") {
-                console.log("Autenticación completada."); 
+                console.log("Autenticación completada.");
                 sessionStorage.setItem("nickname", getCookie('display_name'));
                 console.log(sessionStorage.getItem("nickname"));
-                const authToken = getCookie("auth_token");    
-                console.log('authToken:', authToken); 
+                const authToken = getCookie("auth_token");
+                console.log('authToken:', authToken);
                 initializeUserSession();
 
             }

@@ -11,7 +11,7 @@
             // Verificar si la ventana principal (opener) existe
             if (window.opener) {
                 // Enviar un mensaje a la ventana principal indicando éxito
-                window.opener.postMessage({ status: 'success' }, "https://calm-rock-0d4eb650f.5.azurestaticapps.net");
+                window.opener.postMessage({ status: 'success' }, "http://localhost:4200");
 
                 // Esperar un breve instante para garantizar que el mensaje se reciba antes de cerrar
                 setTimeout(() => {

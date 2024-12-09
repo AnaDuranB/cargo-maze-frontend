@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Client Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script src="js/apiclient.js"></script> <!-- Tu archivo JavaScript -->
+</head>
+<body>
+    <h1>Prueba de sendEncryptedData</h1>
+    <button id="testButton">Probar Envío Cifrado</button>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById("testButton").addEventListener("click", async () => {
+            try {
+                const result = await apiClient.sendEncryptedData("Mensaje de prueba");
+                document.getElementById("output").innerText = `Respuesta descifrada: ${result}`;
+            } catch (error) {
+                document.getElementById("output").innerText = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
