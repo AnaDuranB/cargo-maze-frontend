@@ -102,5 +102,3 @@ const login = (() => {
 })();
 
 login.init();
-
-export default login;
