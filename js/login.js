@@ -3,13 +3,14 @@ const login = (() => {
 
     const loginWithMicrosoft = async () => {
         try {
-            loginWithMicrosoftInNewTab();
+            window.location.href = "https://proyectoarsw.duckdns.org/cargoMaze/login/oauth2/authorization/aad";
+            initializeUserSession();
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
     };
 
-    const loginWithMicrosoftInNewTab = async () => {
+    /*const loginWithMicrosoftInNewTab = async () => {
         const popup = window.open(
             "https://proyectoarsw.duckdns.org/cargoMaze/login/oauth2/authorization/aad",
             "_blank",
@@ -28,14 +29,7 @@ const login = (() => {
 
             }
         });
-    };
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
+    };*/
 
 
     const initializeUserSession = async () => {
@@ -65,5 +59,12 @@ const login = (() => {
     return {
         loginWithMicrosoft,
         getDisplayName: () => sessionStorage.getItem("nickname"),
-    };
+        init: function (name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return sessionStorage.setItem("nickname", parts.pop().split(';').shift());
+                return null;
+            }
+    }
 })();
+login.init("display_name");
