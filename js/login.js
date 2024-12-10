@@ -1,9 +1,28 @@
+import { PublicClientApplication } from "@azure/msal-browser";
+
+// Configuración de MSAL
+const msalConfig = {
+    auth: {
+        clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
+        authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
+        redirectUri: "https://proyectoarsw.duckdns.org/sessionMenu.html",
+    },
+    cache: {
+        cacheLocation: "sessionStorage",
+        storeAuthStateInCookie: false,
+    },
+};
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
 const login = (() => {
     let api = apiClient;
 
     const loginWithMicrosoft = async () => {
         try {
-            window.location.href = "https://proyectoarsw.duckdns.org/login/oauth2/authorization/aad";
+            await msalInstance.loginRedirect({
+                scopes: ["openid", "profile", "email"],
+            });
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
@@ -11,54 +30,79 @@ const login = (() => {
 
     const initializeUserSession = async () => {
         try {
-            const nickname = sessionStorage.getItem("nickname");
-            if (!nickname) {
-                console.error("Nickname no encontrado en sessionStorage.");
+            const accounts = msalInstance.getAllAccounts();
+            if (accounts.length === 0) {
+                console.warn("No se encontraron cuentas autenticadas.");
                 return;
             }
 
-            await handleNickname(nickname);
+            const account = accounts[0];
+            sessionStorage.setItem("nickname", account.username);
+            console.log("Sesión iniciada para:", account.username);
+
+            // Opcional: Si necesitas un token de acceso para APIs protegidas
+            const tokenResponse = await msalInstance.acquireTokenSilent({
+                account,
+                scopes: ["User.Read"], // Ajusta los scopes según tus necesidades
+            });
+            console.log("Access Token:", tokenResponse.accessToken);
+            
+            await api.login(newNickname);
+
             window.location.href = "./sessionMenu.html";
         } catch (error) {
-            console.error("Error al inicializar la sesión:", error);
-        }
-    };
-
-    const handleNickname = async (newNickname) => {
-        try {
-            const player = await api.verifyNickname(newNickname);
-            if (!player) {
-                await api.login(newNickname);
+            if (error.name === "InteractionRequiredAuthError") {
+                console.warn("Se requiere interacción del usuario para adquirir el token.");
+                await msalInstance.acquireTokenRedirect({
+                    scopes: ["User.Read"],
+                });
+            } else {
+                console.error("Error al inicializar la sesión:", error);
             }
-            console.log("Player:", player);
-        } catch (error) {
-            console.error("Error al manejar el nickname:", error);
-            throw error;
         }
     };
 
-    const getDisplayNameFromURL = () => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get("displayName");
+    const getDisplayName = () => {
+        return sessionStorage.getItem("nickname");
     };
 
-    const init = () => {
-        const displayName = getDisplayNameFromURL();
-        if (displayName) {
-            sessionStorage.setItem("nickname", displayName);
-            console.log("Nickname guardado:", displayName);
-            initializeUserSession();
-        } else {
-            console.warn("No se encontró displayName en la URL.");
+    const logout = async () => {
+        try {
+            await msalInstance.logoutRedirect();
+            sessionStorage.clear(); // Limpia los datos de la sesión
+            console.log("Sesión cerrada.");
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        }
+    };
+
+    const init = async () => {
+        try {
+            // Procesa el hash de redirección después del login
+            const redirectResponse = await msalInstance.handleRedirectPromise();
+            if (redirectResponse) {
+                console.log("Respuesta de redirección:", redirectResponse);
+                const account = redirectResponse.account;
+                sessionStorage.setItem("nickname", account.username);
+                console.log("Nickname guardado:", account.username);
+            }
+
+            // Inicializa la sesión del usuario si está autenticado
+            await initializeUserSession();
+        } catch (error) {
+            console.error("Error durante la inicialización:", error);
         }
     };
 
     return {
         loginWithMicrosoft,
-        getDisplayName: () => sessionStorage.getItem("nickname"),
+        initializeUserSession,
+        getDisplayName,
+        logout,
         init,
     };
 })();
 
-// Llamada inicial para capturar el displayName de la URL después de la redirección
 login.init();
+
+export default login;
