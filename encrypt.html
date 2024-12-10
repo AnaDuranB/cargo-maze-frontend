@@ -15,7 +15,7 @@
     <script>
         document.getElementById("testButton").addEventListener("click", async () => {
             try {
-                const result = await apiClient.sendEncryptedData("Mensaje de prueba");
+                const result = await apiClient.sendData("Mensaje de prueba");
                 document.getElementById("output").innerText = `Respuesta descifrada: ${result}`;
             } catch (error) {
                 document.getElementById("output").innerText = `Error: ${error.message}`;
