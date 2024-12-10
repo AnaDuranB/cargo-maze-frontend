@@ -1,5 +1,3 @@
-import { PublicClientApplication } from "@azure/msal-browser";
-
 // Configuración de MSAL
 const msalConfig = {
     auth: {
@@ -46,7 +44,7 @@ const login = (() => {
                 scopes: ["User.Read"], // Ajusta los scopes según tus necesidades
             });
             console.log("Access Token:", tokenResponse.accessToken);
-            
+
             await api.login(newNickname);
 
             window.location.href = "./sessionMenu.html";
