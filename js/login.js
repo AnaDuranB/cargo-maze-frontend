@@ -11,7 +11,7 @@ const msalConfig = {
     },
 };
 
-const msalInstance = new PublicClientApplication(msalConfig);
+const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 const login = (() => {
     let api = apiClient;
