@@ -1,31 +1,14 @@
-// Configuración de MSAL
-const msalConfig = {
-    auth: { 
-        clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
-        authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/sessionMenu.html",
-        // redirectUri: "http://localhost:4200/sessionMenu.html",
-    },
-    cache: {
-        cacheLocation: "sessionStorage",
-        storeAuthStateInCookie: false,
-    },
-};
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+// Inicialización de MSAL
+
 
 const login = (() => {
     let api = apiClient;
 
-    const loginWithMicrosoft = async () => {
-        try {
-            await msalInstance.loginRedirect({
-                scopes: ["openid", "profile", "email"],
-            });
-        } catch (error) {
-            console.error("Error during authentication: ", error);
-        }
-    };
+    const msalInstance = window.msalInstance;
+    console.log("en login.js", msalInstance);
+    
 
     const initializeUserSession = async () => {
         try {
@@ -36,18 +19,16 @@ const login = (() => {
             }
 
             const account = accounts[0];
-            sessionStorage.setItem("nickname", account.username);
+            sessionStorage.setItem("nickname", account.username);  
             console.log("Sesión iniciada para:", account.username);
 
-            // Opcional: Si necesitas un token de acceso para APIs protegidas
             const tokenResponse = await msalInstance.acquireTokenSilent({
-                account,
-                scopes: ["openid", "profile", "email"], // Ajusta los scopes según tus necesidades
+                account: account,
+                scopes: ["openid", "profile", "email"],
             });
             console.log("Access Token:", tokenResponse.accessToken);
 
-            // Hacer login en el sistema con el nickname
-            await api.login(account.username);
+            api.login(account.username);
 
             window.location.href = "./sessionMenu.html";
         } catch (error) {
@@ -63,46 +44,72 @@ const login = (() => {
     };
 
     const getDisplayName = () => {
-        return sessionStorage.getItem("nickname");
+        return sessionStorage.getItem("nickname"); 
     };
 
     const logout = async () => {
         try {
-            await msalInstance.logoutRedirect();
-            sessionStorage.clear(); // Limpia los datos de la sesión
+            await msalInstance.logoutRedirect(); 
+            sessionStorage.clear();  
             console.log("Sesión cerrada.");
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
         }
     };
+    const handleResponse = (response) => {
+        if (response) {
+            console.log("Respuesta de redirección recibida:", response);
+            const account = response.account;
+            if (account) {
+                sessionStorage.setItem("nickname", account.username);
+                console.log("Sesión iniciada para:", account.username);
+            }
+        } else {
+            // Si no hay respuesta, verifica si hay cuentas disponibles
+            const accounts = msalInstance.getAllAccounts();
+            if (accounts.length > 0) {
+                const account = accounts[0];
+                sessionStorage.setItem("nickname", account.username);
+                console.log("Cuenta autenticada detectada:", account.username);
+            } else {
+                console.warn("No se encontraron cuentas autenticadas.");
+            }
+        }
+    };
+    
 
     const init = async () => {
+        console.log("Initializing...");
+    
         try {
-            const redirectResponse = await msalInstance.handleRedirectPromise();
-            if (redirectResponse) {
-                console.log("Respuesta de redirección recibida:", redirectResponse);
-                const account = redirectResponse.account;
-                sessionStorage.setItem("nickname", account.username);
-                console.log("Nickname guardado:", account.username);
-            } else {
-                const accounts = msalInstance.getAllAccounts();
-                if (accounts.length > 0) {
-                    const account = accounts[0];
-                    sessionStorage.setItem("nickname", account.username);
-                    console.log("Cuenta detectada en caché:", account.username);
-                } else {
-                    console.warn("No se encontraron cuentas autenticadas.");
-                }
+            // Maneja la respuesta del redireccionamiento
+            await msalInstance.handleRedirectPromise()
+                .then(handleResponse)
+                .catch((error) => {
+                    console.error("Error durante handleRedirectPromise:", error);
+                });
+    
+            const accounts = msalInstance.getAllAccounts();
+            if (accounts.length === 0) {
+                console.warn("No se encontraron cuentas autenticadas después de manejar el redireccionamiento.");
+                return;
             }
-
+    
+            const account = accounts[0];
+            sessionStorage.setItem("nickname", account.username);
+            console.log("Sesión iniciada para:", account.username);
+    
+            // Intenta inicializar la sesión
             await initializeUserSession();
         } catch (error) {
             console.error("Error durante la inicialización:", error);
         }
     };
+    
+        
 
     return {
-        loginWithMicrosoft,
+        // loginWithMicrosoft,
         initializeUserSession,
         getDisplayName,
         logout,

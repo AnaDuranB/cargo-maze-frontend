@@ -7,6 +7,9 @@ const sessionMenu = (() => {
     document.addEventListener('DOMContentLoaded', (event) => {
         sessionMenu.updateUserCount();
     });
+    const msalInstance = window.msalInstance;
+
+    console.log("instancua msal",msalInstance);
 
 
     const enterSession = async (sessionId) => {
@@ -27,8 +30,8 @@ const sessionMenu = (() => {
 
     let connectAndSubscribe = function () {
         console.info('Connecting to WS...');
-        // let socket = new SockJS('http://localhost:8080/stompendpoint');
-        let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
+        let socket = new SockJS('http://localhost:8080/stompendpoint');
+        // let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
@@ -39,10 +42,16 @@ const sessionMenu = (() => {
     };
 
     const initSessionMenu = () => {
+        const nickname = sessionStorage.getItem('nickname');
+        console.log("Nickname en sessionStorage:", nickname);
+
+        // Verificar si msalInstance existe
+        console.log("msalInstance en sessionMenu:", window.msalInstance);
+
         connectAndSubscribe();
     };
 
-    const updateUserCount = async () => { //REALIZAR -> QUE ACTUALIZE SEGUN EL ID DE LA SESSION INCIADA
+    const updateUserCount = async () => { 
         try {
             const currentUsers = await api.getPlayerCountInSession("1");
             const element = document.getElementById("capacity-1");
@@ -50,10 +59,16 @@ const sessionMenu = (() => {
                 element.textContent = `${currentUsers}/4`;
             }
         } catch (error) {
-            console.log(error.responseJSON.error);
+            // Verificar si el error tiene una respuesta y loguearlo adecuadamente
+            if (error.responseJSON) {
+                console.log(error.responseJSON.error);
+            } else {
+                // Si no hay una respuesta JSON, solo loguear el error general
+                console.log("Error al actualizar la cantidad de jugadores: ", error);
+            }
         }
-
     };
+    
     
 
     const unsubscribe = () => {
