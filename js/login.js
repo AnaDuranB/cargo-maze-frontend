@@ -3,7 +3,7 @@ const login = (() => {
 
     const loginWithMicrosoft = async () => {
         try {
-            window.location.href = "https://proyectoarsw.duckdns.org/cargoMaze/login/oauth2/authorization/aad";
+            window.location.href = "https://proyectoarsw.duckdns.org/oauth2/authorization/aad";
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
