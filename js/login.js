@@ -1,9 +1,9 @@
 // Configuración de MSAL
 const msalConfig = {
-    auth: {
+    auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "https://proyectoarsw.duckdns.org/sessionMenu.html",
+        redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/sessionMenu.html",
     },
     cache: {
         cacheLocation: "sessionStorage",
@@ -79,18 +79,29 @@ const login = (() => {
             // Procesa el hash de redirección después del login
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse) {
-                console.log("Respuesta de redirección:", redirectResponse);
+                console.log("Respuesta de redirección recibida:", redirectResponse);
                 const account = redirectResponse.account;
                 sessionStorage.setItem("nickname", account.username);
                 console.log("Nickname guardado:", account.username);
+            } else {
+                // Si no hay redirección, verifica si ya hay cuentas en caché
+                const accounts = msalInstance.getAllAccounts();
+                if (accounts.length > 0) {
+                    const account = accounts[0];
+                    sessionStorage.setItem("nickname", account.username);
+                    console.log("Cuenta detectada en caché:", account.username);
+                } else {
+                    console.warn("No se encontraron cuentas autenticadas.");
+                }
             }
-
+    
             // Inicializa la sesión del usuario si está autenticado
             await initializeUserSession();
         } catch (error) {
             console.error("Error durante la inicialización:", error);
         }
     };
+    
 
     return {
         loginWithMicrosoft,
