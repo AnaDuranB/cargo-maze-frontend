@@ -6,16 +6,45 @@ se resuelva, es decir, esperar a que los datos lleguen del servidor.
 const apiClient = (() => {
 
 
-    //const url = "http://localhost:8080/cargoMaze/";
+    const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
-    
+    // const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
+
+    const getAccessToken = async () => {
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length === 0) {
+            throw new Error("No hay cuentas autenticadas.");
+        }
+
+        const account = accounts[0];
+        const tokenRequest = {
+            scopes: ["openid", "profile", "email"],
+            account: account,
+        };
+
+        try {
+            const response = await msalInstance.acquireTokenSilent(tokenRequest);
+            return response.accessToken;
+        } catch (error) {
+            if (error instanceof msal.InteractionRequiredAuthError) {
+                await msalInstance.acquireTokenRedirect(tokenRequest);
+            } else {
+                console.error("Error al obtener el token:", error);
+                throw error;
+            }
+        }
+    };
+
     //GET
 
     const getGameSessionBoard = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
             method: "GET",
-            credentials: "include", // Esto asegura que las cookies se envíen
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -26,7 +55,11 @@ const apiClient = (() => {
     const getGameSessionState = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
             method: "GET",
-            credentials: "include", // Esto asegura que las cookies se envíen
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,  // Añadimos el token en las cabeceras
+                "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
+            },
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -34,9 +67,14 @@ const apiClient = (() => {
         return await response.json();
     };
     const getPlayersInSession = async (gameSessionId) => {
+        const token = await getAccessToken();
         let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
             method: "GET",
-            credentials: "include", // Esto asegura que las cookies se envíen
+            headers: {
+                "Authorization": `Bearer ${token}`,  
+                "Content-Type": "application/json",  
+            },
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -47,6 +85,10 @@ const apiClient = (() => {
     const getPlayerCountInSession = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/players/count`, {
             method: "GET",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+                "Content-Type": "application/json",
+            },
             credentials: "include", // Esto asegura que las cookies se envíen
         });
         if (!response.ok) {
