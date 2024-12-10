@@ -11,7 +11,7 @@ const login = (() => {
 
     const loginWithMicrosoftInNewTab = async () => {
         const popup = window.open(
-            "https://proyectoarsw.duckdns.org/login/oauth2/authorization/aad",
+            "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net",
             "_blank",
             "width=600,height=600"
         );
