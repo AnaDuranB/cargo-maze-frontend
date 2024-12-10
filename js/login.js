@@ -4,40 +4,21 @@ const login = (() => {
     const loginWithMicrosoft = async () => {
         try {
             window.location.href = "https://proyectoarsw.duckdns.org/cargoMaze/login/oauth2/authorization/aad";
-            initializeUserSession();
         } catch (error) {
             console.error("Error during authentication: ", error);
         }
     };
 
-    /*const loginWithMicrosoftInNewTab = async () => {
-        const popup = window.open(
-            "https://proyectoarsw.duckdns.org/cargoMaze/login/oauth2/authorization/aad",
-            "_blank",
-            "width=600,height=600"
-        );
-
-        window.addEventListener("message", (event) => {
-            if (event.origin !== "https://calm-rock-0d4eb650f.5.azurestaticapps.net") return; // Validar origen del mensaje
-            if (event.data.status === "success") {
-                console.log("Autenticación completada."); 
-                sessionStorage.setItem("nickname", getCookie('display_name'));
-                console.log(sessionStorage.getItem("nickname"));
-                const authToken = getCookie("auth_token");    
-                console.log('authToken:', authToken); 
-                initializeUserSession();
-
-            }
-        });
-    };*/
-
-
     const initializeUserSession = async () => {
         try {
+            const nickname = sessionStorage.getItem("nickname");
+            if (!nickname) {
+                console.error("Nickname no encontrado en sessionStorage.");
+                return;
+            }
 
-            await handleNickname(sessionStorage.getItem("nickname"));
+            await handleNickname(nickname);
             window.location.href = "./sessionMenu.html";
-
         } catch (error) {
             console.error("Error al inicializar la sesión:", error);
         }
@@ -46,25 +27,38 @@ const login = (() => {
     const handleNickname = async (newNickname) => {
         try {
             const player = await api.verifyNickname(newNickname);
-            if(!player){
+            if (!player) {
                 await api.login(newNickname);
             }
-            console.log('player:', player);
+            console.log("Player:", player);
         } catch (error) {
             console.error("Error al manejar el nickname:", error);
             throw error;
         }
     };
 
+    const getDisplayNameFromURL = () => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("displayName");
+    };
+
+    const init = () => {
+        const displayName = getDisplayNameFromURL();
+        if (displayName) {
+            sessionStorage.setItem("nickname", displayName);
+            console.log("Nickname guardado:", displayName);
+            initializeUserSession();
+        } else {
+            console.warn("No se encontró displayName en la URL.");
+        }
+    };
+
     return {
         loginWithMicrosoft,
         getDisplayName: () => sessionStorage.getItem("nickname"),
-        init: function (name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return sessionStorage.setItem("nickname", parts.pop().split(';').shift());
-                return null;
-            }
-    }
+        init,
+    };
 })();
-login.init("display_name");
+
+// Llamada inicial para capturar el displayName de la URL después de la redirección
+login.init();
