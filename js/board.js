@@ -9,7 +9,6 @@ const board = (() => {
 
 
     const api = apiClient;
-    const nickname = sessionStorage.getItem('nickname');
     const session = sessionStorage.getItem('session');
     /*let state = null;
 
@@ -137,7 +136,7 @@ const board = (() => {
     const movePlayer = async (position) => {
         try {
             await stompClient.send("/app/sessions/move." + session, {}, JSON.stringify({ 
-                nickname: nickname,
+                nickname: getDisplayName(),
                 position: { 
                     x: position.x, 
                     y: position.y 
@@ -151,7 +150,7 @@ const board = (() => {
 
     const initializeGameSession = async () => {
         try {
-            if (!nickname || !session) {
+            if (!getDisplayName()|| !session) {
                 console.log("Nickname o Game Session ID no encontrados.");
                 return;
             }
@@ -186,7 +185,7 @@ const board = (() => {
 
     const exitFromGameSession = async () => {
         try {
-            await api.removePlayerFromSession(session, nickname);
+            await api.removePlayerFromSession(session, getDisplayName());
             await stompClient.send("/app/sessions", {});
             await stompClient.send("/app/sessions/enterOrExitSession." + session, {});
             unsubscribe();
@@ -208,7 +207,7 @@ const board = (() => {
     const connectAndSubscribe = async function () {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
-             let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
+            let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
             //let socket = new SockJS('http://localhost:8080/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
@@ -273,11 +272,16 @@ const board = (() => {
     };
 
     const exitAfterWinning = async () => {
-        await api.removePlayerFromSession(session, nickname);
+        await api.removePlayerFromSession(session, getDisplayName());
         await stompClient.send("/app/sessions", {});
         sessionStorage.removeItem('session');
         window.location.href = "./sessionMenu.html";
     }
+
+    
+    const getDisplayName = () => {
+        return sessionStorage.getItem("nickname"); 
+    };
 
     return {
         init: function(){
@@ -288,8 +292,10 @@ const board = (() => {
         initializeBoard,
         exitFromGameSession,
         initializeGameSession,
-        exitAfterWinning
+        exitAfterWinning,
+        getDisplayName
     };
+
 
 })();
 board.init();
