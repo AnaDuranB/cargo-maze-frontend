@@ -2,9 +2,9 @@
 
 const apiClient = (() => {
     
-    const url = "http://localhost:8080/cargoMaze/";
+    //const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
-    // const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
+    const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
 
     const getGameSessionBoard = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);

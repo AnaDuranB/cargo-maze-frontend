@@ -2,7 +2,7 @@ const msalConfig = {
     auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "http://localhost:4200/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
         navigateToLoginRequestUrl: false
     },
     cache: {
@@ -61,8 +61,8 @@ const authConfig = (() => {
         // Choose which account to logout from by passing a username.
         const logoutRequest = {
             account: myMSALObj.getAccountByUsername(username),
-            mainWindowRedirectUri: 'http://localhost:3000/signout',
-            redirectUri: 'http://localhost:3000/redirect.html',
+            mainWindowRedirectUri: 'https://calm-rock-0d4eb650f.5.azurestaticapps.net/signout',
+            redirectUri: 'https://calm-rock-0d4eb650f.5.azurestaticapps.net/redirect.html',
         };
     
         myMSALObj.logoutPopup(logoutRequest);
