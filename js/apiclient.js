@@ -1,6 +1,8 @@
 // Configuración de MSAL
 
 const apiClient = (() => {
+
+    const auth = authConfig;
     
     const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
@@ -20,12 +22,29 @@ const apiClient = (() => {
         }
         return await response.json();
     };
-
+ 
+    const tryJwt = async () => {
+        let tokenResponse = await auth.getAccessTokenSilent();
+        let token = tokenResponse.accessToken; // Ensure you're extracting the correct token
+        let response = await fetch(`${url}resource`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`, // Add the Bearer prefix
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+   
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        return await response.json();
+    };
     const getGameSessionState = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${await getAccessToken()}`,  // Añadimos el token en las cabeceras
+                "Authorization": `Bearer ${await auth.getAccessTokenSilent()}`,// Añadimos el token en las cabeceras
                 "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
             },
             credentials: "include",
@@ -175,7 +194,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname
+        verifyNickname,
+        tryJwt
     };
 
 })();

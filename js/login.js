@@ -12,12 +12,13 @@ const login = (() => {
         try {
             const tokenResponse = await auth.getAccessTokenSilent();
             console.log("Access Token:", tokenResponse.accessToken);
-            const player = await api.verifyNickname(nickname)
-            if(!player){
+            console.log("Access Token:", tokenResponse);
+            //console.log("JWT:", apiClient.tryJwt());
+            /*if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
                 api.login(nickname);
             }
-            window.location.href = "sessionMenu.html";
+            window.location.href = "sessionMenu.html";*/
 
         } catch (error) {
             if (error.name === "InteractionRequiredAuthError") {

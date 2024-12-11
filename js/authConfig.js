@@ -2,8 +2,8 @@ const msalConfig = {
     auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "http://localhost:8080/login/oauth2/code/aad", // Asegúrate de que esta URL esté registrada en Azure
-        navigateToLoginRequestUrl: false
+        redirectUri: "http://localhost:4200/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        navigateToLoginRequestUrl: true
     },
     cache: {
         cacheLocation: "localStorage",  // Usamos sessionStorage para persistencia temporal
@@ -91,11 +91,11 @@ const authConfig = (() => {
         try {
             const tokenResponse = await myMSALObj.acquireTokenSilent(
             {
-                scopes: ["openid", "profile", "email"],
+                scopes: ["openid", "profile", "email", "/cargoMaze/**"],
                 account: account,
             });
     
-            return tokenResponse.accessToken;
+            return tokenResponse;
         } catch (error) {
             console.error("Error al obtener el token:", error);
     
