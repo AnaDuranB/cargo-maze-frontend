@@ -14,7 +14,7 @@ const login = (() => {
             console.log("Access Token:", tokenResponse);
             const response = await api.verifyJwt();
             console.log(response);
-            const player = await api.verifyNickname(nickname)
+            /*const player = await api.verifyNickname(nickname)
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
 
@@ -22,7 +22,7 @@ const login = (() => {
             }
             else{
                 console.log("El jugador ya existe");
-            }
+            }*/
             window.location.href = "sessionMenu.html";
         } catch (error) {
             if (error.name === "InteractionRequiredAuthError") {
