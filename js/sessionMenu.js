@@ -5,7 +5,6 @@ const sessionMenu = (() => {
     let subscription = null;
     let auth = authConfig;
 
-
     document.addEventListener('DOMContentLoaded', (event) => {
         sessionMenu.updateUserCount();
     });
@@ -30,7 +29,7 @@ const sessionMenu = (() => {
     let connectAndSubscribe = function () {
         console.info('Connecting to WS...');
         let socket = new SockJS('http://localhost:8080/stompendpoint');
-        // let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
+        //let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
@@ -44,7 +43,7 @@ const sessionMenu = (() => {
         connectAndSubscribe();
     };
 
-    const updateUserCount = async () => { 
+    const updateUserCount = async () => { //REALIZAR -> QUE ACTUALIZE SEGUN EL ID DE LA SESSION INCIADA
         try {
             const currentUsers = await api.getPlayerCountInSession("1");
             const element = document.getElementById("capacity-1");
@@ -52,16 +51,10 @@ const sessionMenu = (() => {
                 element.textContent = `${currentUsers}/4`;
             }
         } catch (error) {
-            // Verificar si el error tiene una respuesta y loguearlo adecuadamente
-            if (error.responseJSON) {
-                console.log(error.responseJSON.error);
-            } else {
-                // Si no hay una respuesta JSON, solo loguear el error general
-                console.log("Error al actualizar la cantidad de jugadores: ", error);
-            }
+            console.log(error.responseJSON.error);
         }
+
     };
-    
     
 
     const unsubscribe = () => {
@@ -74,8 +67,13 @@ const sessionMenu = (() => {
     return {
         enterSession,
         unsubscribe,
+        init: function () {
+            initSessionMenu();
+        },
         updateUserCount
     };
 
 })();
+
+sessionMenu.init();
 
