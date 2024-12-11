@@ -1,9 +1,7 @@
 // Configuración de MSAL
 
 const apiClient = (() => {
-
     
-
     const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
     // const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
@@ -160,7 +158,7 @@ const apiClient = (() => {
             if (!response.ok) {
                 throw new Error('Nickname no disponible');
             }
-            return await response.json();
+            return true;
         } catch (error) {
             return null;
         }
@@ -168,7 +166,6 @@ const apiClient = (() => {
 
 
     return {
-        loginWithMicrosoft,
         login,
         getGameSessionBoard,
         getGameSessionState,

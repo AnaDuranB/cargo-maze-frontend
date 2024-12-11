@@ -2,7 +2,7 @@ const msalConfig = {
     auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "http://localhost/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        redirectUri: "http://localhost:8080/login/oauth2/code/aad", // Asegúrate de que esta URL esté registrada en Azure
         navigateToLoginRequestUrl: false
     },
     cache: {
@@ -14,6 +14,7 @@ const msalConfig = {
 const myMSALObj = new msal.PublicClientApplication(msalConfig);
 
 let username = "";
+let account = null;
 
 function selectAccount () {
 
@@ -31,12 +32,16 @@ function selectAccount () {
         console.warn("Multiple accounts detected.");
     
     } else if (currentAccounts.length === 1) {
+        account = currentAccounts[0];
         username = currentAccounts[0].username;
     }
 }
 
-function signIn(loginRequest) {
-    myMSALObj.loginPopup(loginRequest)
+function signIn() {
+    myMSALObj.loginPopup(
+        {
+        scopes: ["openid", "profile", "email"]
+        })
         .then(handleResponse)
         .catch(error => {
             console.error(error);
@@ -44,54 +49,50 @@ function signIn(loginRequest) {
 }
     
 
+function signOut() {
 
-async function logout() {
-    try {
-        await msalInstance.logoutRedirect(); 
-        sessionStorage.clear();  
-        console.log("Sesión cerrada.");
-    } catch (error) {
-        console.error("Error al cerrar sesión:", error);
-    }
-};
+    /**
+     * You can pass a custom request object below. This will override the initial configuration. For more information, visit:
+     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/request-response-object.md#request
+     */
+
+    // Choose which account to logout from by passing a username.
+    const logoutRequest = {
+        account: myMSALObj.getAccountByUsername(username),
+        mainWindowRedirectUri: 'http://localhost:3000/signout',
+        redirectUri: 'http://localhost:3000/redirect.html',
+    };
+
+    myMSALObj.logoutPopup(logoutRequest);
+}
 
 
 function handleResponse (response) {
     if (response) {
         console.log("Respuesta de redirección recibida:", response);
-        const account = response.account;
-        if (account) {
-            sessionStorage.setItem("nickname", account.username);
-            console.log("Sesión iniciada para:", account.username);
-        }
-    } else {
-        // Si no hay respuesta, verifica si hay cuentas disponibles
         const accounts = msalInstance.getAllAccounts();
         if (accounts.length > 0) {
-            const account = accounts[0];
+            account = accounts[0];
             sessionStorage.setItem("nickname", account.username);
             console.log("Cuenta autenticada detectada:", account.username);
         } else {
             console.warn("No se encontraron cuentas autenticadas.");
         }
+
+    } else {
+        console.warn("No se recibió respuesta de redirección.");
     }
 };
 
-async function getAccessToken () {
-
-    const accounts = myMSALObj.getAllAccounts();
-    if (accounts.length === 0) {
-        throw new Error("No se encontró ninguna cuenta autenticada.");
-    }
-
-    const account = accounts[0];
-    const tokenRequest = {
-        scopes: ["openid", "profile", "email"],
-        account: account,
-    };
+async function getAccessTokenSilent(tokenRequest) {
 
     try {
-        const tokenResponse = await myMSALObj.acquireTokenSilent(tokenRequest);
+        const tokenResponse = await myMSALObj.acquireTokenSilent(
+        {
+            scopes: ["openid", "profile", "email"],
+            account: account,
+        });
+
         return tokenResponse.accessToken;
     } catch (error) {
         console.error("Error al obtener el token:", error);
@@ -104,5 +105,10 @@ async function getAccessToken () {
         }
     }
 };
+
+
+async function getAccessTokenDirect(params) {
+    return await msalInstance.acquireTokenRedirect(params);
+}
 
 selectAccount();
