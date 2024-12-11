@@ -14,6 +14,7 @@ const login = (() => {
             console.log("Access Token:", tokenResponse);
             const response = await api.verifyJwt();
             console.log(response);
+            console.log("Nickname:", nickname);
             const player = await api.verifyNickname(nickname)
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
