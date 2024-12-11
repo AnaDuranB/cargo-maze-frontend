@@ -3,14 +3,12 @@ const sessionMenu = (() => {
     let api = apiClient;
     let stompClient = null;
     let subscription = null;
-    let login = login;
+    let auth = authConfig;
+
 
     document.addEventListener('DOMContentLoaded', (event) => {
         sessionMenu.updateUserCount();
     });
-    const msalInstance = window.msalInstance;
-
-    console.log("instancua msal",msalInstance);
 
 
     const enterSession = async (sessionId) => {
@@ -43,12 +41,6 @@ const sessionMenu = (() => {
     };
 
     const initSessionMenu = () => {
-        const nickname = sessionStorage.getItem('nickname');
-        console.log("Nickname en sessionStorage:", nickname);
-
-        // Verificar si msalInstance existe
-        console.log("msalInstance en sessionMenu:", window.msalInstance);
-
         connectAndSubscribe();
     };
 
@@ -82,12 +74,8 @@ const sessionMenu = (() => {
     return {
         enterSession,
         unsubscribe,
-        init: function () {
-            initSessionMenu();
-        },
         updateUserCount
     };
 
 })();
 
-sessionMenu.init();

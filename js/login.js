@@ -5,21 +5,24 @@
 const login = (() => {
     let api = apiClient;
     let nickname = sessionStorage.getItem('nickname');
+    let auth = authConfig;
 
 
     const initializeUserSession = async () => {
         try {
-            const tokenResponse = await getAccessToken();
+            const tokenResponse = await auth.getAccessTokenSilent();
             console.log("Access Token:", tokenResponse.accessToken);
             const player = await api.verifyNickname(nickname)
             if(!player){
+                console.log("No existe el jugador, se creará uno nuevo");
                 api.login(nickname);
             }
+            window.location.href = "sessionMenu.html";
 
         } catch (error) {
             if (error.name === "InteractionRequiredAuthError") {
                 console.warn("Se requiere interacción del usuario para adquirir el token.");
-                await acquireTokenRedirect({
+                await auth.acquireTokenRedirect({
                     scopes: ["User.Read"],
                 });
             } else {
