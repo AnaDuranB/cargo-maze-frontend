@@ -1,5 +1,4 @@
 const sessionMenu = (() => {
-    let nickname = sessionStorage.getItem('nickname');
     let api = apiClient;
     let stompClient = null;
     let subscription = null;
@@ -11,11 +10,11 @@ const sessionMenu = (() => {
 
     const enterSession = async (sessionId) => {
         try {
-            if (!nickname || nickname.length === 0) {
+            if (!getDisplayName() || getDisplayName().length === 0) {
                 alert("No se ha ingresado un nickname");
                 return;
             }
-            await api.enterSession(sessionId, nickname);
+            await api.enterSession(sessionId, getDisplayName());
             stompClient.send("/app/sessions", {}); 
             sessionStorage.setItem('session', sessionId);
             window.location.href = "game.html";
@@ -63,13 +62,18 @@ const sessionMenu = (() => {
         console.log("Unsubscribed from the gameSession Topic");
     };
 
+    const getDisplayName = () => {
+        return sessionStorage.getItem("nickname"); 
+    };
+
     return {
         enterSession,
         unsubscribe,
         init: function () {
             initSessionMenu();
         },
-        updateUserCount
+        updateUserCount,
+        getDisplayName
     };
 
 })();

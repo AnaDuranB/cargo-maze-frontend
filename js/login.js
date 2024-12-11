@@ -4,7 +4,6 @@
 
 const login = (() => {
     let api = apiClient;
-    let nickname = sessionStorage.getItem('nickname');
     let auth = authConfig;
 
 
@@ -14,11 +13,11 @@ const login = (() => {
             console.log("Access Token:", tokenResponse);
             const response = await api.verifyJwt();
             console.log(response);
-            console.log("Nickname:", nickname);
-            const player = await api.verifyNickname(nickname)
+            console.log("Nickname:", getDisplayName());
+            const player = await api.verifyNickname(getDisplayName())
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
-                api.login(nickname);
+                api.login(getDisplayName());
             }
             //window.location.href = "sessionMenu.html";*/
         } catch (error) {
