@@ -12,6 +12,8 @@ const sessionMenu = (() => {
 
     const enterSession = async (sessionId) => {
         try {
+            const tokenResponse = await auth.getAccessTokenSilent();
+            console.log("Access Token:", tokenResponse.accessToken);
             if (!nickname || nickname.length === 0) {
                 alert("No se ha ingresado un nickname");
                 return;
@@ -45,6 +47,8 @@ const sessionMenu = (() => {
 
     const updateUserCount = async () => { //REALIZAR -> QUE ACTUALIZE SEGUN EL ID DE LA SESSION INCIADA
         try {
+            const tokenResponse = await auth.getAccessTokenSilent();
+            console.log("Access Token:", tokenResponse.accessToken);
             const currentUsers = await api.getPlayerCountInSession("1");
             const element = document.getElementById("capacity-1");
             if (element) {
