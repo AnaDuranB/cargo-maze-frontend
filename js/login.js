@@ -17,7 +17,7 @@ const login = (() => {
             const player = await api.verifyNickname(getDisplayName())
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
-                api.login(getDisplayName());
+                await api.login(getDisplayName());
             }
             //window.location.href = "sessionMenu.html";*/
         } catch (error) {
