@@ -1,6 +1,11 @@
 // Configuración de MSAL
 
 const apiClient = (() => {
+
+    let auth = authConfig;
+    const getAccessToken = async () => {
+        return auth.getAccessTokenSilent();
+    }
     
     const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
@@ -21,12 +26,25 @@ const apiClient = (() => {
         return await response.json();
     };
 
+    const verifyJwt = async () => {
+        let response = await fetch(`${url}resource`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,
+            },
+            credentials: "include",
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        return await response.json();
+    };
+
     const getGameSessionState = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${await getAccessToken()}`,  // Añadimos el token en las cabeceras
-                "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
             },
             credentials: "include",
         });
@@ -36,11 +54,10 @@ const apiClient = (() => {
         return await response.json();
     };
     const getPlayersInSession = async (gameSessionId) => {
-        const token = await getAccessToken();
         let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,  
+                "Authorization": `Bearer ${await getAccessToken()}`,   
                 "Content-Type": "application/json",  
             },
             credentials: "include",
@@ -56,7 +73,6 @@ const apiClient = (() => {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${await getAccessToken()}`, 
-                "Content-Type": "application/json",
             },
             credentials: "include", // Esto asegura que las cookies se envíen
         });
@@ -76,11 +92,14 @@ const apiClient = (() => {
             type: "POST",
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+                "Content-Type": "application/json" 
+            },
             xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
+                withCredentials: true
             }
-
-        })
+        });
         return promise;
     };
 
@@ -93,11 +112,14 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
             xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
+                withCredentials: true
             }
         });
-        return response; // Return the response to the caller
+        return response;
     };
 
 
@@ -108,8 +130,11 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
             xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
+                withCredentials: true
             }
         });
         return response; // Return the response to the caller
@@ -123,8 +148,11 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
             xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
+                withCredentials: true
             }
         });
         return response; // Return the response to the caller
@@ -140,8 +168,11 @@ const apiClient = (() => {
             type: 'DELETE',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
             xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
+                withCredentials: true
             }
         });
         console.log(response); // Log successful response
@@ -153,7 +184,11 @@ const apiClient = (() => {
         try {
             let response = await fetch(`${url}players/${nickname}`, {
                 method: "GET",
-                credentials: "include", // Esto asegura que las cookies se envíen
+                headers: {
+                    "Authorization": `Bearer ${await getAccessToken()}`,
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
             });
             if (!response.ok) {
                 throw new Error('Nickname no disponible');
@@ -175,7 +210,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname
+        verifyNickname,
+        verifyJwt
     };
 
 })();
