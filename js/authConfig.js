@@ -70,7 +70,7 @@ function signOut() {
 function handleResponse (response) {
     if (response) {
         console.log("Respuesta de redirección recibida:", response);
-        const accounts = msalInstance.getAllAccounts();
+        const accounts = myMSALObj.getAllAccounts();
         if (accounts.length > 0) {
             account = accounts[0];
             sessionStorage.setItem("nickname", account.username);
@@ -99,7 +99,7 @@ async function getAccessTokenSilent(tokenRequest) {
 
         if (error.name === "InteractionRequiredAuthError") {
             // Si se requiere interacción, redirigir a la página de login
-            await window.msalInstance.acquireTokenRedirect(tokenRequest);
+            await window.myMSALObj.acquireTokenRedirect(tokenRequest);
         } else {
             throw error;
         }
@@ -108,7 +108,7 @@ async function getAccessTokenSilent(tokenRequest) {
 
 
 async function getAccessTokenDirect(params) {
-    return await msalInstance.acquireTokenRedirect(params);
+    return await myMSALObj.acquireTokenRedirect(params);
 }
 
 selectAccount();
