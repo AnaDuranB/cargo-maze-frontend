@@ -1,0 +1,31 @@
+{
+  "name": "cargo-maze-frontend",
+  "version": "0.0.1",
+  "description": "Pollos hermanos ARSW project.",
+  "main": "login.js",
+  "scripts": {
+    "test": "jest --forceExit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnaDuranB/cargo-maze-frontend.git"
+  },
+  "keywords": [
+    "ARSW"
+  ],
+  "author": "Pollos Hermanos (Milton Gutierrez - Ana Duran)",
+  "license": "N/A",
+  "bugs": {
+    "url": "https://github.com/AnaDuranB/cargo-maze-frontend/issues"
+  },
+  "homepage": "https://github.com/AnaDuranB/cargo-maze-frontend#readme",
+
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
+  }
+}

@@ -5,10 +5,19 @@
 
 const login = (() => {
     let api = apiClient;
+    let auth = authConfuig
 
-    const msalInstance = window.msalInstance;
-    console.log("en login.js", msalInstance);
-    
+    const loginWithMicrosoft = async () => {
+        try {
+            // Inicia la redirección de login
+            auth.signIn({
+                scopes: ["openid", "profile", "email"]
+            });
+            console.log("Redirección iniciada correctamente.");
+        } catch (error) {
+            console.error("Error durante la autenticación: ", error);
+        }
+    };
 
     const initializeUserSession = async () => {
         try {
@@ -30,7 +39,7 @@ const login = (() => {
 
             api.login(account.username);
 
-            window.location.href = "./sessionMenu.html";
+            //window.location.href = "./sessionMenu.html";
         } catch (error) {
             if (error.name === "InteractionRequiredAuthError") {
                 console.warn("Se requiere interacción del usuario para adquirir el token.");
@@ -47,36 +56,14 @@ const login = (() => {
         return sessionStorage.getItem("nickname"); 
     };
 
-    const logout = async () => {
-        try {
-            await msalInstance.logoutRedirect(); 
-            sessionStorage.clear();  
-            console.log("Sesión cerrada.");
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        }
-    };
-    const handleResponse = (response) => {
-        if (response) {
-            console.log("Respuesta de redirección recibida:", response);
-            const account = response.account;
-            if (account) {
-                sessionStorage.setItem("nickname", account.username);
-                console.log("Sesión iniciada para:", account.username);
-            }
-        } else {
-            // Si no hay respuesta, verifica si hay cuentas disponibles
-            const accounts = msalInstance.getAllAccounts();
-            if (accounts.length > 0) {
-                const account = accounts[0];
-                sessionStorage.setItem("nickname", account.username);
-                console.log("Cuenta autenticada detectada:", account.username);
-            } else {
-                console.warn("No se encontraron cuentas autenticadas.");
-            }
-        }
-    };
     
+    const initMSAL =  () => {
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        console.log("instancua msal",msalInstance);
+        window.msalInstance = window.msalInstance == null ?  msalInstance: window.msalInstance; 
+        console.log("window ", window.msalInstance);
+    }
+
 
     const init = async () => {
         console.log("Initializing...");
@@ -109,7 +96,7 @@ const login = (() => {
         
 
     return {
-        // loginWithMicrosoft,
+        loginWithMicrosoft,
         initializeUserSession,
         getDisplayName,
         logout,

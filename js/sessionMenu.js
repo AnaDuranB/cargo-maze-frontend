@@ -3,6 +3,7 @@ const sessionMenu = (() => {
     let api = apiClient;
     let stompClient = null;
     let subscription = null;
+    let login = login;
 
     document.addEventListener('DOMContentLoaded', (event) => {
         sessionMenu.updateUserCount();

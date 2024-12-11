@@ -1,73 +1,12 @@
 // Configuración de MSAL
-const msalConfig = {
-    auth: { 
-        clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
-        authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "http://localhost:4200/sessionMenu.html", // Asegúrate de que esta URL esté registrada en Azure
-    },
-    cache: {
-        cacheLocation: "sessionStorage",  // Usamos sessionStorage para persistencia temporal
-        storeAuthStateInCookie: false,   // No almacenar el estado de autenticación en cookies
-    },
-};
-const msalInstance = new msal.PublicClientApplication(msalConfig);
-console.log("instancua msal",msalInstance);
-window.msalInstance = msalInstance;
-console.log("window ", window.msalInstance);
 
 const apiClient = (() => {
 
-    const loginWithMicrosoft = async () => {
-        try {
-            // Inicia la redirección de login
-            await msalInstance.loginRedirect({
-                scopes: ["openid", "profile", "email"]
-            })
-            console.log("Redirección iniciada correctamente.");
-        } catch (error) {
-            console.error("Error durante la autenticación: ", error);
-        }
-    };
+    
 
     const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
     // const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
-
-    const getAccessToken = async () => {
-        // Asegúrate de que window.msalInstance exista
-        if (!msalInstance) {
-            console.error("MSAL instance not initialized");
-            throw new Error("MSAL instance is not available");
-        }
-    
-        const accounts = window.msalInstance.getAllAccounts();
-        if (accounts.length === 0) {
-            throw new Error("No se encontró ninguna cuenta autenticada.");
-        }
-    
-        const account = accounts[0];
-        const tokenRequest = {
-            scopes: ["openid", "profile", "email"],
-            account: account,
-        };
-    
-        try {
-            const tokenResponse = await window.msalInstance.acquireTokenSilent(tokenRequest);
-            return tokenResponse.accessToken;
-        } catch (error) {
-            console.error("Error al obtener el token:", error);
-            
-            if (error.name === "InteractionRequiredAuthError") {
-                // Si se requiere interacción, redirigir a la página de login
-                await window.msalInstance.acquireTokenRedirect(tokenRequest);
-            } else {
-                throw error;
-            }
-        }
-    };
-    
-    
-    //GET
 
     const getGameSessionBoard = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
