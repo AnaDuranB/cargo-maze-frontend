@@ -10,12 +10,14 @@ const login = (() => {
 
     const initializeUserSession = async () => {
         try {
-            const tokenResponse = await auth.getAccessTokenSilent();
-            console.log("Access Token:", tokenResponse.accessToken);
             const player = await api.verifyNickname(nickname)
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
+
                 api.login(nickname);
+            }
+            else{
+                console.log("El jugador ya existe");
             }
             window.location.href = "sessionMenu.html";
 

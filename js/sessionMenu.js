@@ -3,7 +3,6 @@ const sessionMenu = (() => {
     let api = apiClient;
     let stompClient = null;
     let subscription = null;
-    let auth = authConfig;
 
     document.addEventListener('DOMContentLoaded', (event) => {
         sessionMenu.updateUserCount();
@@ -48,7 +47,7 @@ const sessionMenu = (() => {
             const currentUsers = await api.getPlayerCountInSession("1");
             const element = document.getElementById("capacity-1");
             if (element) {
-                element.textContent = `${currentUsers}/4`;
+                element.textContent = `${currentUsers.count}/4`;
             }
         } catch (error) {
             console.log(error.responseJSON.error);

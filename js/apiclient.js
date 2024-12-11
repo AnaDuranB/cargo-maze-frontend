@@ -7,14 +7,7 @@ const apiClient = (() => {
     // const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
 
     const getGameSessionBoard = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${await getAccessToken()}`,
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        });
+        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
@@ -25,10 +18,8 @@ const apiClient = (() => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${await getAccessToken()}`,  // Añadimos el token en las cabeceras
                 "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
-            },
-            credentials: "include",
+            }
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -36,14 +27,11 @@ const apiClient = (() => {
         return await response.json();
     };
     const getPlayersInSession = async (gameSessionId) => {
-        const token = await getAccessToken();
         let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,  
                 "Content-Type": "application/json",  
-            },
-            credentials: "include",
+            }
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -55,10 +43,8 @@ const apiClient = (() => {
         let response = await fetch(`${url}sessions/${gameSessionId}/players/count`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${await getAccessToken()}`, 
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Esto asegura que las cookies se envíen
+                "Content-Type": "application/json",  
+            } // Esto asegura que las cookies se envíen
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -76,9 +62,6 @@ const apiClient = (() => {
             type: "POST",
             data: json,
             contentType: "application/json",
-            xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
-            }
 
         })
         return promise;
@@ -93,9 +76,6 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
-            xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
-            }
         });
         return response; // Return the response to the caller
     };
@@ -108,9 +88,6 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
-            xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
-            }
         });
         return response; // Return the response to the caller
 
@@ -123,9 +100,6 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
-            xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
-            }
         });
         return response; // Return the response to the caller
     };
@@ -140,9 +114,6 @@ const apiClient = (() => {
             type: 'DELETE',
             data: json,
             contentType: "application/json",
-            xhrFields: {
-                withCredentials: true // Permite enviar cookies en solicitudes CORS
-            }
         });
         console.log(response); // Log successful response
         return response; // Return the response to the caller
@@ -153,7 +124,9 @@ const apiClient = (() => {
         try {
             let response = await fetch(`${url}players/${nickname}`, {
                 method: "GET",
-                credentials: "include", // Esto asegura que las cookies se envíen
+                headers: {
+                    "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
+                }
             });
             if (!response.ok) {
                 throw new Error('Nickname no disponible');
