@@ -12,7 +12,14 @@ const apiClient = (() => {
     const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
 
     const getGameSessionBoard = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
+        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
@@ -52,7 +59,8 @@ const apiClient = (() => {
             headers: {
                 "Authorization": `Bearer ${await getAccessToken()}`,   
                 "Content-Type": "application/json",  
-            }
+            },
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
