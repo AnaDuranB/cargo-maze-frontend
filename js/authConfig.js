@@ -6,8 +6,8 @@ const msalConfig = {
         navigateToLoginRequestUrl: false
     },
     cache: {
-        cacheLocation: "sessionStorage",  // Usamos sessionStorage para persistencia temporal
-        storeAuthStateInCookie: false,   // No almacenar el estado de autenticación en cookies
+        cacheLocation: "localStorage",  // Usamos sessionStorage para persistencia temporal
+        storeAuthStateInCookie: true,   // No almacenar el estado de autenticación en cookies
     },
 };
 
