@@ -1,6 +1,11 @@
 // Configuración de MSAL
 
 const apiClient = (() => {
+
+    let auth = authConfig;
+    const getAccessToken = async () => {
+        return auth.getAccessTokenSilent();
+    }
     
     //const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
@@ -14,12 +19,27 @@ const apiClient = (() => {
         return await response.json();
     };
 
+    const verifyJwt = async () => {
+        let response = await fetch(`${url}resource`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,
+            },
+            credentials: "include",
+        });
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        return await response.json();
+    };
+
     const getGameSessionState = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/state`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
-            }
+                "Authorization": `Bearer ${await getAccessToken()}`,  // Añadimos el token en las cabeceras
+            },
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -30,6 +50,7 @@ const apiClient = (() => {
         let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
             method: "GET",
             headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`,   
                 "Content-Type": "application/json",  
             }
         });
@@ -43,8 +64,9 @@ const apiClient = (() => {
         let response = await fetch(`${url}sessions/${gameSessionId}/players/count`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json",  
-            } // Esto asegura que las cookies se envíen
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
+            credentials: "include", // Esto asegura que las cookies se envíen
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
@@ -62,8 +84,14 @@ const apiClient = (() => {
             type: "POST",
             data: json,
             contentType: "application/json",
-
-        })
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+                "Content-Type": "application/json" 
+            },
+            xhrFields: {
+                withCredentials: true
+            }
+        });
         return promise;
     };
 
@@ -76,8 +104,14 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
+            xhrFields: {
+                withCredentials: true
+            }
         });
-        return response; // Return the response to the caller
+        return response;
     };
 
 
@@ -88,6 +122,12 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
+            xhrFields: {
+                withCredentials: true
+            }
         });
         return response; // Return the response to the caller
 
@@ -100,6 +140,12 @@ const apiClient = (() => {
             type: 'PUT',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
+            xhrFields: {
+                withCredentials: true
+            }
         });
         return response; // Return the response to the caller
     };
@@ -114,6 +160,12 @@ const apiClient = (() => {
             type: 'DELETE',
             data: json,
             contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${await getAccessToken()}`, 
+            },
+            xhrFields: {
+                withCredentials: true
+            }
         });
         console.log(response); // Log successful response
         return response; // Return the response to the caller
@@ -125,8 +177,10 @@ const apiClient = (() => {
             let response = await fetch(`${url}players/${nickname}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type": "application/json",  // Aseguramos el tipo de contenido correcto
-                }
+                    "Authorization": `Bearer ${await getAccessToken()}`,
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
             });
             if (!response.ok) {
                 throw new Error('Nickname no disponible');
@@ -148,7 +202,8 @@ const apiClient = (() => {
         removePlayerFromSession,
         getPlayerCountInSession,
         resetGameSession,
-        verifyNickname
+        verifyNickname,
+        verifyJwt
     };
 
 })();

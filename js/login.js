@@ -10,6 +10,10 @@ const login = (() => {
 
     const initializeUserSession = async () => {
         try {
+            const tokenResponse = await auth.getAccessTokenSilent();
+            console.log("Access Token:", tokenResponse);
+            const response = await api.verifyJwt();
+            console.log(response);
             const player = await api.verifyNickname(nickname)
             if(!player){
                 console.log("No existe el jugador, se creará uno nuevo");
@@ -20,7 +24,6 @@ const login = (() => {
                 console.log("El jugador ya existe");
             }
             window.location.href = "sessionMenu.html";
-
         } catch (error) {
             if (error.name === "InteractionRequiredAuthError") {
                 console.warn("Se requiere interacción del usuario para adquirir el token.");

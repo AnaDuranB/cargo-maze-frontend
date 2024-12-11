@@ -86,25 +86,18 @@ const authConfig = (() => {
         }
     };
     
-    async function getAccessTokenSilent(tokenRequest) {
+    async function getAccessTokenSilent() {
     
         try {
             const tokenResponse = await myMSALObj.acquireTokenSilent(
             {
-                scopes: ["openid", "profile", "email"],
+                scopes: ["api://bd798536-2348-457e-b5d8-1a138c147eab/CargoMaze.Use.All"],
                 account: account,
             });
     
             return tokenResponse.accessToken;
         } catch (error) {
             console.error("Error al obtener el token:", error);
-    
-            if (error.name === "InteractionRequiredAuthError") {
-                // Si se requiere interacción, redirigir a la página de login
-                await window.myMSALObj.acquireTokenRedirect(tokenRequest);
-            } else {
-                throw error;
-            }
         }
     };
     
