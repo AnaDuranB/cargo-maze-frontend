@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@azure/msal-browser": "^3.27.0",
+    "cargo-maze-frontend": "file:",
     "jquery": "^3.7.1"
   }
 }

@@ -11,19 +11,55 @@ const apiClient = (() => {
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
     const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
 
-    const getGameSessionBoard = async (gameSessionId) => {
-        let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${await getAccessToken()}`,
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        });
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
+    const SECRET_KEY = "TGQ7ZWet0t8WKnhxvse1iA==";
+
+    async function decrypt(encryptedDataBase64) {
+        try {
+            const encryptedData = Uint8Array.from(atob(encryptedDataBase64), c => c.charCodeAt(0));
+            const iv = encryptedData.slice(0, 16);  // Obtener el IV (si es necesario)
+            const encryptedBytes = encryptedData.slice(16);
+
+            const secretKeyBase64 = SECRET_KEY; 
+            const keyBuffer = Uint8Array.from(atob(secretKeyBase64), c => c.charCodeAt(0));
+
+            const aesKey = await crypto.subtle.importKey(
+                "raw",
+                keyBuffer,
+                { name: "AES-CBC" },
+                false,
+                ["decrypt"]
+            );
+
+            const decryptedBuffer = await crypto.subtle.decrypt(
+                { name: "AES-CBC", iv },
+                aesKey,
+                encryptedBytes
+            );
+
+            const decryptedText = new TextDecoder().decode(decryptedBuffer);
+            console.log("Decrypted data:", decryptedText);
+            return decryptedText;
+        } catch (error) {
+            console.error("Error during decryption:", error.message);
+            throw new Error("Decryption failed or data is not UTF-8 compliant.");
         }
-        return await response.json();
+    }
+
+    const getGameSessionBoard = async (gameSessionId) => {
+        try{ 
+            let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
+            if (!response.ok) {
+                throw new Error(`Error en la solicitud: ${response.status}`);
+            }
+            const {data: encryptedData} = await response.json();
+            const decryptedData = await decrypt(encryptedData);
+            const boardState = JSON.parse(decryptedData);
+            console.log("ESTADO TABLERO: ", boardState);
+            
+            return boardState;
+        } catch (error){
+            throw error;
+        }
     };
 
     const verifyJwt = async () => {
