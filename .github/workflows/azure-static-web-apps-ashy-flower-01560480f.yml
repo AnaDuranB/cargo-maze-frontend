@@ -34,11 +34,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: 'https://sonarcloud.io'
         run: sonar-scanner \
-          -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend \
-          -Dsonar.organization=miltongutierrez \
-          -Dsonar.sources=. \
+          -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend 
+          -Dsonar.organization=miltongutierrez
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-
 
   deploy_to_azure:
     runs-on: ubuntu-latest
