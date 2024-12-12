@@ -7,7 +7,7 @@ const apiClient = (() => {
         return auth.getAccessTokenSilent();
     }
     
-    //const url = "http://localhost:8080/cargoMaze/";
+    // const url = "http://localhost:8080/cargoMaze/";
     //const url = "https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/cargoMaze/"
     const url = "https://proyectoarsw.duckdns.org/cargoMaze/";
 
@@ -37,27 +37,30 @@ const apiClient = (() => {
             );
 
             const decryptedText = new TextDecoder().decode(decryptedBuffer);
-            console.log("Decrypted data:", decryptedText);
             return decryptedText;
         } catch (error) {
-            console.error("Error during decryption:", error.message);
             throw new Error("Decryption failed or data is not UTF-8 compliant.");
         }
     }
-
+    
     const getGameSessionBoard = async (gameSessionId) => {
-        try{ 
-            let response = await fetch(`${url}sessions/${gameSessionId}/board/state`);
-            if (!response.ok) {
-                throw new Error(`Error en la solicitud: ${response.status}`);
-            }
-            const {data: encryptedData} = await response.json();
-            const decryptedData = await decrypt(encryptedData);
+        try{     
+            let response = await fetch(`${url}sessions/${gameSessionId}/board/state`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${await getAccessToken()}`,
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+            const { data } = await response.json();
+
+            const decryptedData = await decrypt(data);
             const boardState = JSON.parse(decryptedData);
-            console.log("ESTADO TABLERO: ", boardState);
-            
+
             return boardState;
-        } catch (error){
+        } catch(error){
             throw error;
         }
     };
@@ -87,8 +90,13 @@ const apiClient = (() => {
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        return await response.json();
+        const { data } = await response.json();
+        const decryptedData = await decrypt(data);
+        const gameState = JSON.parse(decryptedData);
+
+        return gameState;
     };
+
     const getPlayersInSession = async (gameSessionId) => {
         let response = await fetch(`${url}sessions/${gameSessionId}/players`, {
             method: "GET",
@@ -101,7 +109,11 @@ const apiClient = (() => {
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        return await response.json();
+        const { data } = await response.json();
+        const decryptedData = await decrypt(data);
+        const playersSession = JSON.parse(decryptedData);
+
+        return playersSession;
     };
 
     const getPlayerCountInSession = async (gameSessionId) => {
@@ -110,12 +122,15 @@ const apiClient = (() => {
             headers: {
                 "Authorization": `Bearer ${await getAccessToken()}`, 
             },
-            credentials: "include", // Esto asegura que las cookies se envíen
+            credentials: "include",
         });
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        return await response.json();
+        const encryptedData = await response.text();
+        const decryptedData = await decrypt(encryptedData);
+
+        return parseInt(decryptedData, 10);
     };
     
 
