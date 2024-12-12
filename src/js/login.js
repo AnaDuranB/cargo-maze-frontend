@@ -1,7 +1,3 @@
-
-
-// Inicialización de MSAL
-
 const login = (() => {
     let api = apiClient;
     let nickname = sessionStorage.getItem('nickname');

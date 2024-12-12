@@ -1,8 +1,12 @@
+const msal = require('msal'); 
+const login = require('./login');  // Ajusta esta ruta según tu proyecto
+
 const msalConfig = {
     auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        // redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        redirectUri: "http://localhost:4200/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
         navigateToLoginRequestUrl: false
     },
     cache: {
@@ -39,16 +43,19 @@ const authConfig = (() => {
         }
     }
     
-    function signIn() {
-        myMSALObj.loginPopup(
-            {
-            scopes: ["openid", "profile", "email"]
-            })
-            .then(handleResponse)
-            .catch(error => {
-                console.error(error);
-            });
+    async function signIn() {
+        console.log('signIn called');  // Agrega esta línea para depuración
+        try {
+            await myMSALObj.loginPopup({ scopes: ["openid", "profile", "email"] });
+        } catch (error) {
+            console.error("Error during sign-in", error);
+        }
     }
+    
+    
+    
+
+    
         
     
     function signOut() {
@@ -126,4 +133,4 @@ const authConfig = (() => {
 })();
 authConfig.init();
 
-
+module.exports = authConfig; 
