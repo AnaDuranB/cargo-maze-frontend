@@ -47,6 +47,7 @@ jobs:
             -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
             -Dsonar.organization=miltongutierrez
             -Dsonar.sources=src/jstest
+            -Dsonar.tests=src/tests
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/lcov-report.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -1,5 +1,5 @@
-import sessionMenu from '../src/jstest/sessionMenu';
-import apiClient from '../src/jstest/apiclient';
+import sessionMenu from '../../src/jstest/sessionMenu';
+import apiClient from '../../src/jstest/apiclient';
 import SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 
@@ -23,7 +23,7 @@ jest.mock('stompjs', () => {
         })
     };
 });
-jest.mock('../src/jstest/apiclient');
+jest.mock('../../src/jstest/apiclient');
 
 describe('sessionMenu', () => {
     beforeEach(() => {

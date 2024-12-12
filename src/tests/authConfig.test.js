@@ -1,11 +1,11 @@
-import authConfig from '../src/jstest/authConfig';
-const { PublicClientApplication } = require('../__mocks__/msal');  // Importa el mock
+import authConfig from '../../src/jstest/authConfig';
+const { PublicClientApplication } = require('../../__mocks__/msal');  // Importa el mock
 
-jest.mock('../src/js/login', () => ({
+jest.mock('../../src/js/login', () => ({
     initializeUserSession: jest.fn(),
 }));
 
-jest.mock('../__mocks__/msal', () => {
+jest.mock('../../__mocks__/msal', () => {
     return {
         PublicClientApplication: jest.fn().mockImplementation(() => {
             return {

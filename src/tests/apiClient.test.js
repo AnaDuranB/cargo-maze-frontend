@@ -1,4 +1,4 @@
-import apiClient from '../src/jstest/apiclient';
+import apiClient from '../../src/jstest/apiclient';
 global.$ = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 beforeEach(() => {

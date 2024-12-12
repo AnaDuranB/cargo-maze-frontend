@@ -1,6 +1,6 @@
-import login from '../src/jstest/login';
-import apiClient from '../src/jstest/apiclient';
-import authConfig from '../src/jstest/authConfig';
+import login from '../../src/jstest/login';
+import apiClient from '../../src/jstest/apiclient';
+import authConfig from '../../src/jstest/authConfig';
 
 jest.mock('../src/jstest/apiclient', () => ({
     verifyNickname: jest.fn(),
