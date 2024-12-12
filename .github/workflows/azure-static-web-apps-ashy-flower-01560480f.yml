@@ -36,7 +36,8 @@ jobs:
       - name: Add npm bin to PATH
         run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
       - name: Run tests
-        run: npm test -- --coverage --coverageReporters="lcov"
+        run: npm test -- --config=jest.config.js --coverage --coverageReporters="lcov"
+
 
       # Publicar los resultados de SonarCloud
       - name: SonarCloud Analysis
