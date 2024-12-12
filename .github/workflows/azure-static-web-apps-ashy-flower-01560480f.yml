@@ -43,11 +43,12 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           token: ${{ secrets.SONAR_TOKEN }}
-          args: >
+          extraArgs: >
               -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
               -Dsonar.organization=miltongutierrez
               -Dsonar.sources=.
               -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+              -X
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
