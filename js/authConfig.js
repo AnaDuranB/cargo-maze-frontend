@@ -2,7 +2,7 @@ const msalConfig = {
     auth: { 
         clientId: "bd798536-2348-457e-b5d8-1a138c147eab",
         authority: "https://login.microsoftonline.com/ac3a534a-d5d6-42f6-aa4f-9dd5fbef911f",
-        redirectUri: "https://calm-rock-0d4eb650f.5.azurestaticapps.net/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
+        redirectUri: "http://localhost:4200/successLogin.html", // Asegúrate de que esta URL esté registrada en Azure
         navigateToLoginRequestUrl: false
     },
     cache: {

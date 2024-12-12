@@ -10,18 +10,8 @@ const board = (() => {
 
     const api = apiClient;
     const session = sessionStorage.getItem('session');
-    /*let state = null;
 
-    /* Escucha el evento `beforeunload` para detectar cuando el usuario intenta salir de la página.
-    window.addEventListener('beforeunload', async (event) => {
-        await board.exitFromGameSession();
-    });
 
-    // Escucha el evento `popstate` para detectar cambios en el historial, como cuando se presiona el botón "Atrás".
-    window.addEventListener('popstate', async (event) => {
-        await board.exitFromGameSession();
-    });
-    */
     const handleKeydown = (e) => {
         switch(e.key) {
             case 'a':
@@ -207,8 +197,8 @@ const board = (() => {
     const connectAndSubscribe = async function () {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
-            let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
-            //let socket = new SockJS('http://localhost:8080/stompendpoint');
+            //let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
+            let socket = new SockJS('http://localhost:8080/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
