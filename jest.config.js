@@ -5,9 +5,7 @@ module.exports = {
     coverageReporters: ['lcov', 'text', 'json'],
     collectCoverageFrom: [
         "src/jstest/*.{js,jsx,ts,tsx}",  // Incluir todos los archivos .js, .jsx, .ts, .tsx en src
-        "!src/js/**/*",               // Excluir la carpeta 'js' dentro de src,
-        "!src/js",
-        "src/tests/*.{js,jsx,ts,tsx}", // Incluir los archivos de prueba
+        "src/tests/*.{js,jsx,ts,tsx}" // Incluir los archivos de prueba
     ],
     moduleNameMapper: {
         '^msal$': '<rootDir>/__mocks__/msal.js',
