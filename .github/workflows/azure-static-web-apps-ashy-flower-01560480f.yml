@@ -40,13 +40,20 @@ jobs:
 
 
       # Publicar los resultados de SonarCloud
-      - name: SonarCloud Analysis
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          token: ${{ secrets.SONAR_TOKEN }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+      - name: SonarQube
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+            with:
+              fetch-depth: 0 
+          - name: Install dependencies
+            run: yarn
+          - name: Test and coverage
+            run: yarn jest --coverage
+          - name: SonarQube Scan
+            uses: SonarSource/sonarqube-scan-action@v4
+            env:
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
       # Build And Deploy (solo después del análisis de SonarCloud)    
