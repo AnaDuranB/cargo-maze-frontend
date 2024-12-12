@@ -15,60 +15,37 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
 
-      # Instalar Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.20.4'
+          node-version: '18.x'
 
-      # Instalar dependencias
       - name: Install dependencies
-        run: npm install
+        run: yarn
 
-      # Ejecutar los tests y generar la cobertura
-      - name: Give Jest execute permissions
-        run: chmod +x node_modules/.bin/jest
-      - name: Add npm bin to PATH
-        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
-      - name: Run tests
-        run: npm test -- --config=jest.config.js --coverage --coverageReporters="lcov"
+      - name: Test and coverage
+        run: yarn jest --coverage
 
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Publicar los resultados de SonarCloud
-      - name: SonarQube
-        runs-on: ubuntu-latest
-        - uses: actions/checkout@v2
-          with:
-            fetch-depth: 0 
-        - name: Install dependencies
-          run: yarn
-        - name: Test and coverage
-          run: yarn jest --coverage
-        - name: SonarQube Scan
-          uses: SonarSource/sonarqube-scan-action@v4
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
-      # Build And Deploy (solo después del análisis de SonarCloud)    
       - name: Build And Deploy
-        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_01560480F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "./src" # App source code path
-          api_location: "" # Api source code path - optional
+          api_location: "" # API source code path - optional
           output_location: "." # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -76,7 +53,6 @@ jobs:
     name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_01560480F }}
