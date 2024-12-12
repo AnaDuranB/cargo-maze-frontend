@@ -27,7 +27,7 @@ const sessionMenu = (() => {
     let connectAndSubscribe = function () {
         console.info('Connecting to WS...');
         //let socket = new SockJS('http://localhost:8080/stompendpoint');
-        let socket = new SockJS('https://pollo1-cnfud2cthtfyfyez.eastus-01.azurewebsites.net/stompendpoint');
+        let socket = new SockJS('https://pollos2-g3ddfmbndvhceqbe.eastus-01.azurewebsites.net/stompendpoint');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
