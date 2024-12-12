@@ -10,45 +10,42 @@ on:
       - master
 
 jobs:
-  build_and_quality_check:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin' # Eclipse Adoptium distribution
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.20.4'
-
-      - name: Install SonarQube Scanner
-        run: npm install -g sonar-scanner
-
-      - name: Run SonarQube Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 'https://sonarcloud.io'
-        run: sonar-scanner \
-          -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend 
-          -Dsonar.organization=miltongutierrez
-          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-
-  deploy_to_azure:
-    runs-on: ubuntu-latest
-    name: Deploy to Azure
-    needs: build_and_quality_check
-    if: ${{ needs.build_and_quality_check.result == 'success' }}
+    name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
 
+      # Instalar Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.20.4'
+
+      # Instalar dependencias
+      - name: Install dependencies
+        run: npm install
+
+      # Ejecutar los tests y generar la cobertura
+      - name: Give Jest execute permissions
+        run: chmod +x node_modules/.bin/jest
+      - name: Add npm bin to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+      - name: Run tests
+        run: npm test -- --coverage --coverageReporters="lcov"
+
+      # Publicar los resultados de SonarCloud
+      - name: SonarCloud Analysis
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          token: ${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Build And Deploy (solo después del análisis de SonarCloud)    
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -58,7 +55,7 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
+          app_location: "./src" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "." # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
