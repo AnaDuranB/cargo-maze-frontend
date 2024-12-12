@@ -43,12 +43,7 @@ jobs:
       - name: SonarCloud Analysis
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          args: |
-            -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
-            -Dsonar.organization=miltongutierrez
-            -Dsonar.sources=src/jstest
-            -Dsonar.tests=src/tests
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/lcov-report.info
+          token: ${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
