@@ -12,12 +12,14 @@ on:
 jobs:
   build_and_quality_check:
     runs-on: ubuntu-latest
-    name: Build and Quality Check
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
         with:
-          submodules: true
-          lfs: false
+          java-version: '17'
+          distribution: 'temurin' # Eclipse Adoptium distribution
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -30,13 +32,13 @@ jobs:
       - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend \
-            -Dsonar.organization=miltongutierrez \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.sources=. \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          SONAR_HOST_URL: 'https://sonarcloud.io'
+        run: sonar-scanner \
+          -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend \
+          -Dsonar.organization=miltongutierrez \
+          -Dsonar.sources=. \
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
 
   deploy_to_azure:
     runs-on: ubuntu-latest
