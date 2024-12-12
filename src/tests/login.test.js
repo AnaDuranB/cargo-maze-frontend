@@ -2,12 +2,12 @@ import login from '../../src/jstest/login';
 import apiClient from '../../src/jstest/apiclient';
 import authConfig from '../../src/jstest/authConfig';
 
-jest.mock('../src/jstest/apiclient', () => ({
+jest.mock('../../src/jstest/apiclient', () => ({
     verifyNickname: jest.fn(),
     login: jest.fn(),
 }));
 
-jest.mock('../src/jstest/authConfig', () => ({
+jest.mock('../../src/jstest/authConfig', () => ({
     acquireTokenRedirect: jest.fn(),
 }));
 
