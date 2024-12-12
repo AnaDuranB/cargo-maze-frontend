@@ -36,22 +36,22 @@ jobs:
       - name: Add npm bin to PATH
         run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
       - name: Run tests
-        run: npm test -- --coverage --coverageReporters="lcov"
+        run: npm test -- --config=jest.config.js --coverage --coverageReporters="lcov"
+
 
       # Publicar los resultados de SonarCloud
       - name: SonarCloud Analysis
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          token: ${{ secrets.SONAR_TOKEN }}
-          args: >
+          args: |
             -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
             -Dsonar.organization=miltongutierrez
-            -Dsonar.sources=./src
-            -Dsonar.tests=./src/jstest
-            -Dsonar.test.inclusions=./src/jstest/**/*.test.js
-            -Dsonar.javascript.lcov.reportPaths=./src/jstest/coverage/lcov.info
+            -Dsonar.sources=.
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/lcov-report.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
 
       # Build And Deploy (solo después del análisis de SonarCloud)    
       - name: Build And Deploy
