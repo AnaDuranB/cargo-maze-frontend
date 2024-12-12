@@ -2,7 +2,7 @@ module.exports = {
     testEnvironment: 'jest-environment-jsdom',
     coverageDirectory: './coverage',
     collectCoverage: true,
-    coverageReporters: ["lcov", "text", "text-summary"],
+    coverageReporters: ['lcov', 'text', 'json'],
     collectCoverageFrom: [
         "src/**/*.{js,jsx,ts,tsx}",  // Incluir todos los archivos .js, .jsx, .ts, .tsx en src
         "!src/js/**/*",               // Excluir la carpeta 'js' dentro de src
@@ -15,4 +15,5 @@ module.exports = {
     transform: {
         "^.+\\.[t|j]sx?$": "babel-jest",
     },
+    
 };
