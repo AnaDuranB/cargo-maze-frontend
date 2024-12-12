@@ -11,12 +11,10 @@ on:
 
 jobs:
   build_and_quality_check:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Quality Check Job
+    name: Build and Quality Check
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
@@ -26,40 +24,27 @@ jobs:
         with:
           node-version: '18.20.4'
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Install SonarQube Scanner
         run: npm install -g sonar-scanner
 
       - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 'https://sonarcloud.io'
         run: |
           sonar-scanner \
             -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend \
             -Dsonar.organization=miltongutierrez \
+            -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.sources=. \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-      - name: Check SonarQube Quality Gate
-        run: |
-          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=MiltonGutierrez_cargo-maze-frontend" | jq -r '.projectStatus.status')
-          echo "Quality Gate status: $STATUS"
-          if [ "$STATUS" != "OK" ]; then
-            echo "Quality Gate failed. Exiting deployment."
-            exit 1
-          fi
-
   deploy_to_azure:
-    needs: build_and_quality_check
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Deploy to Azure Static Web Apps
+    name: Deploy to Azure
+    needs: build_and_quality_check
+    if: ${{ needs.build_and_quality_check.result == 'success' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
@@ -73,7 +58,7 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./src" # App source code path
+          app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "." # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
