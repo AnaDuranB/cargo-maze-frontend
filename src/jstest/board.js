@@ -1,33 +1,24 @@
 import SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import apiClient from './apiclient';
+
+// Board Module
 const board = (() => {
 
-    class Position{
-        constructor(x,y){
-            this.x=x;
-            this.y=y;
-        }        
+    class Position {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
     }
-
 
     const api = apiClient;
     const nickname = sessionStorage.getItem('nickname');
     const session = sessionStorage.getItem('session');
-    /*let state = null;
 
-    /* Escucha el evento `beforeunload` para detectar cuando el usuario intenta salir de la página.
-    window.addEventListener('beforeunload', async (event) => {
-        await board.exitFromGameSession();
-    });
-
-    // Escucha el evento `popstate` para detectar cambios en el historial, como cuando se presiona el botón "Atrás".
-    window.addEventListener('popstate', async (event) => {
-        await board.exitFromGameSession();
-    // });
-    */
     const handleKeydown = (e) => {
-        switch(e.key) {
+        console.log('Key pressed:', e.key); // Debugging line
+        switch (e.key) {
             case 'a':
                 createPositionFromMovement('LEFT');
                 break;
@@ -43,22 +34,20 @@ const board = (() => {
         }
     };
 
-
-    //MOVEMENTS LISTENERS
     document.addEventListener('DOMContentLoaded', (event) => {
         board.initializeBoard();
     });
 
     document.addEventListener('keydown', handleKeydown);
-    
+
     const initializeBoard = async () => {
         try {
-            const boardArray = await api.getGameSessionBoard("1"); // Esperar a que la promesa se resuelva
+            const boardArray = await api.getGameSessionBoard("1");
             generateBoard(boardArray);
         } catch (error) {
             console.log("Error al obtener el tablero de la sesión:", error.responseJSON.error);
         }
-    }
+    };
 
     const generateBoard = (boardArray) => {
         const gameBoard = document.getElementById('game-board');
@@ -67,13 +56,11 @@ const board = (() => {
             return;
         }
 
-        // Limpiar el tablero antes de generarlo
         gameBoard.innerHTML = '';
         boardArray.forEach(row => {
             row.forEach(cell => {
                 const cellDiv = document.createElement('li');
                 cellDiv.classList.add('cell');
-
                 switch (cell) {
                     case '.':
                         cellDiv.classList.add('empty');
@@ -84,11 +71,11 @@ const board = (() => {
                         break;
                     case 'B':
                         cellDiv.classList.add('box');
-                        cellDiv.innerText = '📦'; 
+                        cellDiv.innerText = '📦';
                         break;
                     case 'T':
                         cellDiv.classList.add('goal');
-                        cellDiv.style.backgroundColor = 'yellow'; 
+                        cellDiv.style.backgroundColor = 'yellow';
                         break;
                     case 'P':
                         cellDiv.classList.add('player');
@@ -97,18 +84,18 @@ const board = (() => {
                     case 'BT':
                         cellDiv.classList.add('boxtarget');
                         cellDiv.innerText = '📦';
-                        cellDiv.style.backgroundColor = 'yellow'; 
+                        cellDiv.style.backgroundColor = 'yellow';
                         break;
                     case 'PT':
                         cellDiv.classList.add('playertarget');
                         cellDiv.innerText = '😃';
-                        cellDiv.style.backgroundColor = 'yellow'; 
+                        cellDiv.style.backgroundColor = 'yellow';
                         break;
                 }
                 gameBoard.appendChild(cellDiv);
             });
         });
-    }
+    };
 
     const createPositionFromMovement = async (direction) => {
         let newPosX = 0;
@@ -130,27 +117,24 @@ const board = (() => {
             default:
                 console.log('Dirección inválida:', direction);
                 return;
-
         }
-        let position = new Position(newPosX, newPosY)
-        movePlayer(position)
-    
+        let position = new Position(newPosX, newPosY);
+        movePlayer(position);
     };
 
     const movePlayer = async (position) => {
         try {
-            await stompClient.send("/app/sessions/move." + session, {}, JSON.stringify({ 
+            await stompClient.send("/app/sessions/move." + session, {}, JSON.stringify({
                 nickname: nickname,
-                position: { 
-                    x: position.x, 
-                    y: position.y 
-                }}));
+                position: {
+                    x: position.x,
+                    y: position.y
+                }
+            }));
         } catch (error) {
             console.log("Error al mover el jugador:", error.responseJSON.error);
         }
     };
-
-    //PLAYERS PANEL FUNCIONALITY
 
     const initializeGameSession = async () => {
         try {
@@ -170,7 +154,6 @@ const board = (() => {
             const playerList = document.getElementById("player-list");
 
             const existingNicknames = Array.from(playerList.children).map(item => item.textContent);
-            
             const newNicknames = players.map(player => player.nickname);
             const hasChanges = existingNicknames.length !== newNicknames.length ||
                 !newNicknames.every(nickname => existingNicknames.includes(nickname));
@@ -201,41 +184,39 @@ const board = (() => {
     };
 
     const enterSession = () => {
-        return stompClient.send("/app/sessions/enterOrExitSession." + session, {}); 
+        return stompClient.send("/app/sessions/enterOrExitSession." + session, {});
     };
 
-    //STOMP FUNCTIONS
     let stompClient = null;
     let subscription = null;
 
     const connectAndSubscribe = async function () {
         await new Promise((resolve, reject) => {
             console.info('Connecting to WS...');
-            // let socket = new SockJS('https://cargo-maze-backend-hwgpaheeb7hreqgv.eastus2-01.azurewebsites.net/stompendpoint');
             let socket = new SockJS('http://localhost:8080/stompendpoint');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
-            subscription = stompClient.subscribe('/topic/sessions/' + session + "/move", function (eventbody) {
-                initializeBoard();
-            });
+                console.log('Connected: ' + frame);
+                subscription = stompClient.subscribe('/topic/sessions/' + session + "/move", function (eventbody) {
+                    initializeBoard();
+                });
 
-            subscription = stompClient.subscribe('/topic/sessions/' + session + "/updatePlayerList", function (eventbody) {
-                updatePlayerList(session);
-            });
+                subscription = stompClient.subscribe('/topic/sessions/' + session + "/updatePlayerList", function (eventbody) {
+                    updatePlayerList(session);
+                });
 
-            subscription = stompClient.subscribe('/topic/sessions/' + session + "/updateBoard", function (eventbody) {
-                initializeBoard();
-            });
-              
-            subscription = stompClient.subscribe('/topic/sessions/' + session + "/gameWon", function (eventbody) {
-                const gameStatus = eventbody.body;
-                handleGameStatus(gameStatus);
-            });
-            resolve();
+                subscription = stompClient.subscribe('/topic/sessions/' + session + "/updateBoard", function (eventbody) {
+                    initializeBoard();
+                });
+
+                subscription = stompClient.subscribe('/topic/sessions/' + session + "/gameWon", function (eventbody) {
+                    const gameStatus = eventbody.body;
+                    handleGameStatus(gameStatus);
+                });
+                resolve();
             }, function (error) {
-            reject(error);
-            console.log("STOMP error");
+                reject(error);
+                console.log("STOMP error");
             });
         });
     };
@@ -249,11 +230,10 @@ const board = (() => {
 
     const initGameSession = async () => {
         connectAndSubscribe()
-        .then(() => initializeGameSession())
-        .then(() =>enterSession());
+            .then(() => initializeGameSession())
+            .then(() => enterSession());
     };
 
-    // GANAR
     const handleGameStatus = (status) => {
         if (status) {
             showWinModal();
@@ -280,10 +260,10 @@ const board = (() => {
         await stompClient.send("/app/sessions", {});
         sessionStorage.removeItem('session');
         window.location.href = "./sessionMenu.html";
-    }
+    };
 
     return {
-        init: function(){
+        init: function () {
             initGameSession();
         },
         createPositionFromMovement,
@@ -291,9 +271,11 @@ const board = (() => {
         initializeBoard,
         exitFromGameSession,
         initializeGameSession,
-        exitAfterWinning
+        exitAfterWinning,
+        Position // Export Position class
     };
 
 })();
+
 board.init();
 export default board;
