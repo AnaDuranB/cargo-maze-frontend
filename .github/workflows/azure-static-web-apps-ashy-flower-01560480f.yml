@@ -44,10 +44,12 @@ jobs:
         with:
           token: ${{ secrets.SONAR_TOKEN }}
           args: >
-              -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
-              -Dsonar.organization=miltongutierrez
-              -Dsonar.sources=.
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.projectKey=MiltonGutierrez_cargo-maze-frontend
+            -Dsonar.organization=miltongutierrez
+            -Dsonar.sources=./src
+            -Dsonar.tests=./src/jstest
+            -Dsonar.test.inclusions=./src/jstest/**/*.test.js
+            -Dsonar.javascript.lcov.reportPaths=./src/jstest/coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
